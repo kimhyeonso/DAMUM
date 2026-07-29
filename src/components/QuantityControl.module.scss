@@ -1,0 +1,33 @@
+.quantityControl {
+  display: inline-grid;
+  grid-template-columns: 38px 52px 38px;
+  align-items: center;
+  border: 1px solid rgb(48 70 61 / 35%);
+
+  button {
+    height: 38px;
+    color: var(--color-brand);
+    font-size: 1.2rem;
+    line-height: 1;
+
+    &:disabled {
+      color: #b8bbb5;
+      cursor: not-allowed;
+    }
+
+    &:not(:disabled):hover,
+    &:not(:disabled):focus-visible {
+      background: var(--color-surface);
+    }
+  }
+
+  span {
+    border-right: 1px solid rgb(48 70 61 / 20%);
+    border-left: 1px solid rgb(48 70 61 / 20%);
+    color: var(--color-text);
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 38px;
+    text-align: center;
+  }
+}

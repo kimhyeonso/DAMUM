@@ -1,0 +1,22 @@
+.emptyMessage {
+  display: flex;
+  min-height: 260px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  border: 1px solid rgb(48 70 61 / 20%);
+  color: var(--color-text);
+  text-align: center;
+
+  h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin-top: 10px;
+    color: #72776f;
+    font-size: 0.9rem;
+  }
+}

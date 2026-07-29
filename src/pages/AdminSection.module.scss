@@ -1,0 +1,36 @@
+.section {
+  > p {
+    margin: 0 0 8px;
+    color: #777777;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  h2 {
+    margin: 0 0 30px;
+    color: #111111;
+    font-size: clamp(26px, 3vw, 34px);
+  }
+}
+
+.notice {
+  min-height: 180px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid #e3e3e3;
+
+  strong {
+    color: #222222;
+    font-size: 16px;
+  }
+
+  span {
+    color: #666666;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+}

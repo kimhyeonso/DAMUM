@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "전체보기",
+    "path": "/products",
+    "image": null
+  },
+  {
+    "id": 2,
+    "name": "접시",
+    "path": "/products/category/plates",
+    "image": "/img/category/category-02.png"
+  },
+  {
+    "id": 3,
+    "name": "볼 · 면기",
+    "path": "/products/category/bowls",
+    "image": "/img/category/category-03.png"
+  },
+  {
+    "id": 4,
+    "name": "컵 · 잔",
+    "path": "/products/category/cups",
+    "image": "/img/category/category-04.png"
+  },
+  {
+    "id": 5,
+    "name": "다기",
+    "path": "/products/category/tea-sets",
+    "image": "/img/category/category-05.png"
+  },
+  {
+    "id": 6,
+    "name": "선물세트",
+    "path": "/products/category/gift-sets",
+    "image": "/img/category/category-06.png"
+  }
+]

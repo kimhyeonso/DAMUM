@@ -1,0 +1,39 @@
+.products {
+  width: min(100% - 64px, 1280px);
+  margin: 0 auto;
+  padding: 56px 0 96px;
+}
+
+.catalogHeader {
+  display: block;
+  margin-bottom: 32px;
+  color: #111111;
+
+  p {
+    font-size: 13px;
+    letter-spacing: 0.02em;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(24px, 2.2vw, 34px);
+    font-weight: 500;
+    letter-spacing: -0.05em;
+  }
+
+}
+
+.catalogControls {
+  margin-bottom: 28px;
+}
+
+@media (max-width: 640px) {
+  .products {
+    width: min(100% - 32px, 1280px);
+    padding: 36px 0 64px;
+  }
+
+  .catalogHeader {
+    margin-bottom: 22px;
+  }
+}

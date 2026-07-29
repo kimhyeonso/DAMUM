@@ -1,0 +1,116 @@
+
+
+.categoryMenu {
+  width: min(100% - 32px, 1120px);
+  margin: 56px auto 72px;
+}
+
+// .titleAera {
+//   margin-bottom: 26px;
+//   text-align: center;
+
+//   p {
+//     margin: 0 0 7px;
+//     color: var(--color-muted);
+//     font-size: 11px;
+//     font-weight: 700;
+//     letter-spacing: 0.14em;
+//   }
+
+//   h2 {
+//     margin: 0;
+//     color: var(--color-brand);
+//     font-size: clamp(22px, 2.1vw, 30px);
+//     font-weight: 600;
+//     letter-spacing: -0.06em;
+//   }
+// }
+
+.categoryList {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  overflow: hidden;
+}
+
+.categoryItem {
+  position: relative;
+  display: flex;
+  min-height: 112px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 8px;
+  color: var(--color-text);
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  strong {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+  }
+}
+
+.categoryImage {
+  width: 140px;
+  height: 140px;
+  overflow: hidden;
+  border-radius: 50%;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.8;
+  }
+}
+
+@media (max-width: 760px) {
+  .categoryMenu {
+    margin: 40px auto 52px;
+  }
+
+  .categoryList {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .categoryItem {
+    min-height: 100px;
+
+    &:nth-child(5)::before {
+      display: none;
+    }
+
+    &:nth-child(n + 5)::after {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 1px;
+      background: var(--color-line);
+      content: '';
+    }
+  }
+}
+
+@media (max-width: 420px) {
+  .categoryList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .categoryItem:nth-child(n + 3)::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 1px;
+    background: var(--color-line);
+    content: '';
+  }
+
+  .categoryItem:nth-child(odd)::before {
+    display: none;
+  }
+}

@@ -1,0 +1,59 @@
+.admin {
+  > p:first-child {
+    margin: 0 0 8px;
+    color: #777777;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  h2 {
+    margin: 0;
+    color: #111111;
+    font-size: clamp(28px, 3.5vw, 38px);
+  }
+
+  > span {
+    display: block;
+    margin-top: 12px;
+    color: #666666;
+    font-size: 14px;
+  }
+}
+
+.menuCards {
+  margin-top: 34px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+
+  a {
+    min-height: 120px;
+    padding: 22px;
+    display: flex;
+    align-items: flex-end;
+    border: 1px solid #e3e3e3;
+    color: #111111;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  a:hover,
+  a:focus-visible {
+    border-color: #111111;
+    background: #111111;
+    color: #ffffff;
+  }
+}
+
+.passwordNotice {
+  margin: 26px 0 0;
+  color: #777777;
+  font-size: 13px;
+}
+
+@media (max-width: 560px) {
+  .menuCards {
+    grid-template-columns: 1fr;
+  }
+}

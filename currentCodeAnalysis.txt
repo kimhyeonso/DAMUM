@@ -1,0 +1,93 @@
+RECAT 쇼핑몰 프로젝트 - 1단계 현재 코드 분석
+분석일: 2026-07-29
+범위: 코드 수정 없이 현재 구조와 연결 상태를 확인함
+
+1. 현재 폴더 구조 분석
+- public/
+  - data/: 정적 JSON 데이터. products.json(상품 12개), categories.json(카테고리 6개), banners.json, events.json, notices.json이 있음.
+  - img/: 로고, 배너, 카테고리, 상품 이미지 및 홈 동영상 정적 자산.
+- src/
+  - pages/: 화면 단위 React 컴포넌트. Home, Products, ProductDetail, Login, SignUp, Cart, Wishlist, Order, MyPage, Notice, Admin 등이 있음.
+  - components/: Header/Footer, 상품 목록 및 필터, 장바구니, 로딩, 모달, 보호 라우트 등 재사용 컴포넌트.
+  - firebase/: Firebase 초기화와 Auth, Firestore, Storage API 래퍼.
+  - store/: Zustand 상태 저장소(auth/cart/wishlist/loading/product/order).
+  - hooks/: Zustand 저장소 접근 훅과 useAuth.
+  - constants/, utils/: 라우트·메시지·배송 상수 및 저장소/가격/검증 유틸리티.
+  - _mixin.scss, index.css, App.css: 공통 스타일.
+- 각 화면 및 컴포넌트는 대부분 같은 이름의 .module.scss를 import하여 사용함. 이후에도 JSX 컴포넌트 + 동일 경로의 SCSS Module 방식을 유지해야 함.
+- package.json: React 19, Vite 8, react-router-dom 7, Firebase 12, Zustand 5, Sass가 설치되어 있음.
+
+2. 상품 JSON을 불러오는 위치
+- 실제 상품 데이터: public/data/products.json
+- Home.jsx: 홈 BEST SELLERS에 앞 5개 상품을 fetch('/data/products.json')로 로드.
+- Products.jsx: 전체 상품/카테고리 상품 목록을 fetch로 로드하고 categoryValue와 URL 파라미터를 비교하여 필터링.
+- ProductDetail.jsx: URL의 :id로 상품을 찾아 상세 화면에 표시.
+- SearchResult.jsx: 상품명과 category를 기준으로 검색 결과를 생성.
+- CategoryMenu.jsx, ProductFilter.jsx는 public/data/categories.json을 각각 fetch하여 카테고리 링크를 생성.
+- 상품 데이터는 현재 Firebase productApi.js를 사용하지 않으며, 컴포넌트별 정적 JSON fetch 방식이 실제 동작 경로임.
+
+3. 로그인과 회원가입 페이지를 불러오는 위치
+- 라우트 선언: src/App.jsx
+  - /login -> pages/Login.jsx
+  - /signup -> pages/SignUp.jsx
+- 화면 이동 링크: src/components/Header.jsx의 비로그인 상태 메뉴.
+- Login.jsx와 SignUp.jsx는 각각 제목만 렌더링하는 초기 화면이며, 입력 폼 및 Firebase Auth API 호출은 연결되어 있지 않음.
+- src/firebase/authApi.js에는 login, signUp, logout 함수가 준비되어 있음.
+- src/hooks/useAuth.js에는 Firebase onAuthStateChanged를 Zustand authStore에 반영하는 훅이 있으나 App.jsx 또는 main.jsx에서 호출되지 않음.
+
+4. 라우터 구조
+- 진입점: src/main.jsx가 <BrowserRouter><App /></BrowserRouter>로 App을 감쌈.
+- App.jsx는 <Routes>로 다음 공개 라우트를 선언함.
+  - /, /login, /signup, /wishlist, /mypage, /cart
+  - /notice, /notice/:id
+  - /products, /products/:id, /products/category/:category
+  - /search/:keyword, * (NotFound)
+- App.jsx는 Header, main, Footer, Loading을 공통으로 렌더링함.
+- 확인 필요 오류: App.jsx도 BrowserRouter를 import하지만 사용하지 않음. 반면 main.jsx의 BrowserRouter만 실제 사용 중임.
+- ProtectedRoute, AdminRoute, Order, OrderComplete, Admin, AdminProduct, AdminOrder는 import되어 있으나 <Routes>에 등록되어 있지 않음. 따라서 현재 보호 라우트 및 관리자 라우트는 동작 경로에 포함되지 않음.
+
+5. Zustand 사용 여부
+- 사용 중. src/store/에 다음 Zustand store가 있음.
+  - authStore: user, isAuthenticated, setUser. Header와 ProtectedRoute/AdminRoute가 참조.
+  - cartStore: persist 미들웨어를 사용한 items/addItem/removeItem/clearCart.
+  - wishlistStore: persist 미들웨어를 사용한 items/toggleItem.
+  - loadingStore: isLoading/setLoading. Loading 컴포넌트가 참조.
+  - productStore, orderStore: 상품/주문 상태 정의.
+- 현재 실제 화면에서 직접 사용하는 범위는 Header의 authStore와 Loading의 loadingStore가 중심임.
+- Cart와 ProductDetail은 cartStore가 아니라 localStorage('cart')를 직접 사용함. Wishlist, 상품, 주문 store 및 Firebase API는 화면과 완전히 연결되지 않은 부분이 있음.
+
+6. Firebase를 연결할 때 수정할 파일
+- 환경 설정
+  - .env: VITE_FIREBASE_* 환경변수 입력 파일. 실제 값은 기록하거나 커밋하지 않음.
+  - .env.example: 필요한 변수 이름만 제공하도록 유지/보완.
+  - src/firebase/firebase.js: Firebase App/Auth/Firestore/Storage 초기화. 현재 VITE_FIREBASE_*를 참조함.
+- 인증 연결
+  - src/pages/Login.jsx, Login.module.scss: 로그인 폼·검증·authApi.login 연결.
+  - src/pages/SignUp.jsx, SignUp.module.scss: 가입 폼·검증·authApi.signUp 및 사용자 문서 생성 연결.
+  - src/firebase/authApi.js, src/firebase/userApi.js: Auth 및 사용자 프로필 저장 로직 보완.
+  - src/hooks/useAuth.js, src/App.jsx 또는 src/main.jsx: 인증 상태 감시 훅을 앱 시작 시 한 번 연결.
+  - src/store/authStore.js, src/components/Header.jsx, src/components/ProtectedRoute.jsx, src/components/AdminRoute.jsx: 로그인 상태와 역할 기반 접근 처리.
+- Firestore/Storage 연결
+  - src/firebase/productApi.js, orderApi.js, noticeApi.js, storageApi.js: 데이터 계약과 API 사용 범위를 확정 후 사용.
+  - 상품/공지/주문을 Firebase로 전환하는 화면 및 관련 .module.scss: 현재 정적 JSON fetch 또는 placeholder를 대체할 대상.
+  - firestore.rules 및 storage.rules: 현재 프로젝트에서 확인되지 않음. 관리자, 사용자, 상품, 주문, 파일 업로드 기능을 적용하기 전에 반드시 새로 작성하고 Firebase Console 또는 CLI로 배포해야 함.
+- 라우팅
+  - src/App.jsx: 로그인 후 접근이 필요한 라우트와 관리자 라우트를 ProtectedRoute/AdminRoute의 자식 Route로 등록.
+  - src/constants/routes.js: 실제 등록 라우트와 상수의 일치 유지.
+
+7. 기존 기능을 유지하면서 작업할 순서
+1) 현재 public JSON 기반 상품 목록, 카테고리, 상세, 검색, 장바구니 기능을 기준 동작으로 유지한다.
+2) main.jsx/App.jsx의 라우터와 실제 등록 라우트를 먼저 정리하고, 기존 URL(/login, /signup, /products 등)은 변경하지 않는다.
+3) .env.example에 변수 이름만 정리하고 firebase.js 초기화 실패를 안전하게 처리한다. 실제 환경변수 값은 작성하지 않는다.
+4) Firestore와 Storage의 컬렉션/문서/파일 경로 계약을 정한 뒤 firestore.rules와 storage.rules를 먼저 작성한다. 관리자 기능은 규칙 작성 및 배포 확인 전 완료로 판단하지 않는다.
+5) Login/SignUp에 기존 SCSS Module 패턴의 폼과 검증을 추가하고 authApi, userApi, useAuth, authStore를 연결한다.
+6) 보호 라우트와 관리자 라우트를 App.jsx에 등록하고, 일반 사용자/관리자 권한 및 리다이렉트 동작을 확인한다.
+7) 필요한 범위에 한해 상품, 주문, 공지, 이미지 업로드를 Firebase API로 점진 전환한다. 정적 JSON을 대체하기 전에는 기존 상품 카드 데이터 필드(id, name, category, categoryValue, price, discountRate, description, stock, detailImages, image)를 유지한다.
+8) 각 단계에서 기존 디자인을 유지하며 해당 JSX 파일과 짝이 되는 .module.scss만 최소 수정한다. 기능별 테스트 후 historyCode.txt에 변경 이유, 수정 파일, Firebase 보안 규칙 내용을 단계별 기록한다.
+
+분석 시 확인한 미완성/주의 항목
+- Login/SignUp은 화면 골격만 있고 Firebase Auth와 연결되지 않음.
+- Firebase API와 Zustand store는 일부 준비되어 있으나 많은 화면이 아직 연결하지 않음.
+- 보호/관리자 라우트 컴포넌트와 관리자 화면이 App.jsx 라우트에 등록되지 않음.
+- Firestore/Storage 보안 규칙 파일이 없어 관리자 기능 또는 데이터 쓰기 기능을 안전하게 완료할 수 없는 상태임.
+- Products.jsx의 'latest' 정렬은 비교값을 반환하지 않아 입력 순서를 유지함. 기능 변경 단계에서 정렬 기준을 확정할 필요가 있음.

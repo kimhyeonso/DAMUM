@@ -1,0 +1,404 @@
+.myPage {
+  width: min(100% - 48px, 1160px);
+  margin: 0 auto;
+  padding: 72px 0 96px;
+}
+
+.pageHeader {
+  margin-bottom: 32px;
+
+  p {
+    margin: 0 0 8px;
+    color: #777777;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(28px, 4vw, 40px);
+  }
+
+  span {
+    display: block;
+    margin-top: 12px;
+    color: #666666;
+    font-size: 14px;
+  }
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.panel {
+  min-height: 210px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e3e3e3;
+  background: #ffffff;
+
+  h2 {
+    margin: 0 0 20px;
+    font-size: 20px;
+  }
+
+  strong {
+    color: #222222;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  > span {
+    margin-top: auto;
+    color: #777777;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+}
+
+.memberPanel {
+  grid-column: span 2;
+
+  dl {
+    margin: 0;
+    display: grid;
+    gap: 12px;
+  }
+
+  dl div {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 12px;
+    align-items: center;
+  }
+
+  dt {
+    color: #777777;
+    font-size: 13px;
+  }
+
+  dd {
+    margin: 0;
+    color: #222222;
+    font-size: 14px;
+  }
+}
+
+.panelLabel {
+  margin: 0 0 10px;
+  color: #777777;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.panelDescription {
+  margin: 0;
+  color: #666666;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.statusMessage,
+.errorMessage,
+.successMessage {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.statusMessage {
+  color: #666666;
+}
+
+.errorMessage {
+  color: #c52626;
+}
+
+.successMessage {
+  color: #167342;
+}
+
+.profileForm {
+  display: grid;
+  gap: 12px;
+
+  label {
+    display: grid;
+    gap: 6px;
+    color: #444444;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px 11px;
+    border: 1px solid #d7d7d7;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 400;
+
+    &:focus {
+      outline: 1px solid #111111;
+      border-color: #111111;
+    }
+  }
+
+  button {
+    width: fit-content;
+    margin-top: 4px;
+    padding: 11px 16px;
+    border: 1px solid #111111;
+    background: #111111;
+    color: #ffffff;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+
+    &:disabled {
+      border-color: #d7d7d7;
+      background: #f5f5f5;
+      color: #888888;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.orderList {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  list-style: none;
+
+  li {
+    padding: 12px 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+    gap: 12px;
+    align-items: center;
+    border-top: 1px solid #eeeeee;
+  }
+
+  strong {
+    overflow: hidden;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  span,
+  b {
+    color: #666666;
+    font-size: 12px;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  b {
+    color: #111111;
+    font-weight: 600;
+  }
+}
+
+.emptyOrder {
+  margin: 0;
+  color: #666666;
+  font-size: 14px;
+}
+
+.productLink {
+  width: fit-content;
+  margin-top: auto;
+  padding-top: 18px;
+  color: #111111;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.cartList {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  list-style: none;
+
+  li {
+    padding: 12px 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto auto auto;
+    gap: 10px;
+    align-items: center;
+    border-top: 1px solid #eeeeee;
+  }
+
+  strong {
+    overflow: hidden;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  span,
+  b {
+    color: #666666;
+    font-size: 12px;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  b {
+    color: #111111;
+    font-weight: 600;
+  }
+
+  button {
+    padding: 4px 0;
+    border: 0;
+    background: transparent;
+    color: #777777;
+    font: inherit;
+    font-size: 12px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+
+    &:disabled {
+      color: #aaaaaa;
+      cursor: wait;
+    }
+  }
+}
+
+.emptyCart {
+  margin: 0;
+  color: #666666;
+  font-size: 14px;
+}
+
+.cartTotal {
+  margin-top: 14px;
+  padding-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #d7d7d7;
+
+  span {
+    color: #666666;
+    font-size: 13px;
+  }
+
+  strong {
+    color: #111111;
+    font-size: 15px;
+  }
+}
+
+.cartLink {
+  width: fit-content;
+  margin-top: auto;
+  padding-top: 18px;
+  color: #111111;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.wishlistList {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  list-style: none;
+
+  li {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 0;
+    border-top: 1px solid #eeeeee;
+  }
+
+  img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    background: #f5f5f5;
+  }
+
+  div {
+    min-width: 0;
+    display: grid;
+    gap: 4px;
+  }
+
+  strong {
+    overflow: hidden;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  span {
+    color: #666666;
+    font-size: 12px;
+  }
+
+  button {
+    padding: 4px 0;
+    border: 0;
+    background: transparent;
+    color: #777777;
+    font: inherit;
+    font-size: 12px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+
+    &:disabled {
+      color: #aaaaaa;
+      cursor: wait;
+    }
+  }
+}
+
+.emptyWishlist {
+  margin: 0;
+  color: #666666;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .myPage {
+    width: min(100% - 32px, 1160px);
+    padding: 48px 0 72px;
+  }
+
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .memberPanel {
+    grid-column: auto;
+  }
+
+  .orderList li {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 12px;
+  }
+
+  .cartList li {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 12px;
+  }
+}

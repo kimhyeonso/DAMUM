@@ -1,0 +1,77 @@
+.cartItem {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr) auto minmax(110px, auto) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.imageLink {
+  overflow: hidden;
+  background: var(--color-surface);
+
+  img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+  }
+}
+
+.itemInfo {
+  min-width: 0;
+
+  p {
+    margin-bottom: 5px;
+    color: #72776f;
+    font-size: 0.78rem;
+  }
+
+  a {
+    display: block;
+    overflow: hidden;
+    color: var(--color-text);
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  strong {
+    display: block;
+    margin-top: 8px;
+    color: var(--color-brand);
+    font-size: 0.92rem;
+  }
+}
+
+.itemTotal {
+  color: var(--color-text);
+  font-size: 0.95rem;
+  text-align: right;
+}
+
+.removeButton {
+  color: #7c8079;
+  font-size: 0.78rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 680px) {
+  .cartItem {
+    grid-template-columns: 82px minmax(0, 1fr) auto;
+  }
+
+  .cartItem > :nth-child(3) {
+    grid-column: 2 / 3;
+  }
+
+  .itemTotal {
+    grid-column: 3 / 4;
+    grid-row: 2;
+  }
+
+  .removeButton {
+    grid-column: 3 / 4;
+  }
+}

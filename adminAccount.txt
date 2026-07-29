@@ -1,0 +1,19 @@
+초기 관리자 계정 설정 기록
+
+- 이메일: sales@a.com
+- 비밀번호: 123456789
+- Firestore 문서 경로: users/{Firebase Authentication UID}
+- role: admin
+- 생성일: 2026-07-29
+
+보안 설정
+- 일반 회원가입은 role을 user로만 생성할 수 있습니다.
+- role: admin 문서는 Firebase Console 또는 Firebase Admin SDK처럼 신뢰된 관리자 환경에서만 생성하거나 변경해야 합니다.
+- Firestore 보안 규칙은 로그인한 사용자의 users/{uid}.role 값이 admin일 때 관리자 권한을 허용합니다.
+
+Firebase Console 적용 순서
+1. Authentication → Users에서 위 이메일과 비밀번호로 계정을 생성합니다.
+2. 생성된 UID를 확인합니다.
+3. Firestore Database → Data에서 users/{UID} 문서를 생성합니다.
+4. email, nickname, role: admin, createAt 필드를 저장합니다.
+5. Firestore Database → Rules에서 프로젝트의 firestore.rules 전체 코드를 게시합니다.

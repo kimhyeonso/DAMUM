@@ -1,0 +1,144 @@
+.wishlist {
+  width: min(100% - 40px, 1200px);
+  margin: 0 auto;
+  padding: 56px 0 88px;
+}
+
+.wishlistHeading {
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--color-brand);
+
+  p {
+    color: var(--color-brand);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  h1 {
+    margin: 6px 0;
+    color: var(--color-text);
+    font-size: clamp(1.7rem, 3vw, 2.3rem);
+    letter-spacing: -0.05em;
+  }
+
+  span {
+    color: #72776f;
+    font-size: 0.9rem;
+  }
+}
+
+.itemAreaHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgb(48 70 61 / 25%);
+
+  strong {
+    color: var(--color-text);
+    font-size: 1.05rem;
+  }
+
+  span {
+    color: #72776f;
+    font-size: 0.82rem;
+  }
+}
+
+.itemList {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid rgb(48 70 61 / 25%);
+  list-style: none;
+
+  li {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr) auto;
+    gap: 20px;
+    align-items: center;
+    padding: 18px 0;
+    border-top: 1px solid rgb(48 70 61 / 12%);
+  }
+
+  li:first-child {
+    border-top: 0;
+  }
+
+  button {
+    color: #72776f;
+    font: inherit;
+    font-size: 0.82rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+
+    &:disabled {
+      color: #aaaaaa;
+      cursor: wait;
+    }
+  }
+}
+
+.imageLink {
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--color-surface);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.itemInfo {
+  display: grid;
+  gap: 8px;
+
+  a {
+    overflow: hidden;
+    color: var(--color-text);
+    font-size: 1rem;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  strong {
+    color: var(--color-brand);
+    font-size: 0.95rem;
+  }
+}
+
+.statusMessage,
+.errorMessage {
+  padding: 28px;
+  border: 1px solid rgb(48 70 61 / 20%);
+  color: #5f675e;
+  text-align: center;
+}
+
+.errorMessage {
+  color: #b53b3b;
+}
+
+@media (max-width: 800px) {
+  .wishlist {
+    width: min(100% - 32px, 1200px);
+    padding-top: 36px;
+  }
+
+  .itemAreaHeader {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .itemList li {
+    grid-template-columns: 72px minmax(0, 1fr) auto;
+    gap: 12px;
+  }
+}
