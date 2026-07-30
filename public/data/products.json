@@ -9,6 +9,7 @@
     "description": "따뜻한 국물 요리와 면 요리를 담기 좋은 실용적인 2인 면기 세트입니다.",
     "stock": 18,
     "detailImages": ["/img/products/product-01-main02.jpg"],
+    "detailDescriptionImage": "/img/productDetail/productDetail-01.png",
     "image": "/img/products/product-01-main01.jpg"
   },
   {
@@ -21,6 +22,7 @@
     "description": "매일의 차와 커피 시간을 차분하게 완성해 주는 잔 2개 구성입니다.",
     "stock": 24,
     "detailImages": ["/img/products/product-02-detail01.jpg", "/img/products/product-02-detail02.jpg", "/img/products/product-02-detail03.jpg"],
+    "detailDescriptionImage": "/img/productDetail/productDetail-02.png",
     "image": "/img/products/product-02-main01.jpg"
   },
   {
@@ -32,6 +34,7 @@
     "discountRate": 10,
     "description": "혼자 먹는 식사에도 정갈함을 더하는 공기와 반찬 그릇 세트입니다.",
     "stock": 12,
+    "detailDescriptionImage": "/img/productDetail/productDetail-03.png",
     "image": "/img/products/product-03-main01.jpg"
   },
   {
@@ -44,6 +47,7 @@
     "description": "정성스러운 보자기 포장으로 바로 선물하기 좋은 소담잔 세트입니다.",
     "stock": 9,
     "detailImages": ["/img/products/product-04-detail01.png", "/img/products/product-04-detail02.jpg", "/img/products/product-04-detail03.jpg", "/img/products/product-04-detail04.jpg"],
+    "detailDescriptionImage": "/img/productDetail/productDetail-04.png",
     "image": "/img/products/product-04-main01.png"
   },
   {

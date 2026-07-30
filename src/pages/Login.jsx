@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { login } from '../firebase/authApi'
-import { getFirebaseErrorMessage } from '../utils/firebaseError'
+import { useAuthStore } from '../store/authStore'
 import { isRequired, isValidEmail } from '../utils/validation'
 import styles from './Login.module.scss'
 
@@ -9,7 +8,10 @@ const Login = () => {
   const navigate = useNavigate()
   const [form, setForm] = useState({ email: '', password: '' })
   const [errorMessage, setErrorMessage] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const login = useAuthStore((state) => state.login)
+  const loading = useAuthStore((state) => state.loading)
+  const authError = useAuthStore((state) => state.error)
+  const clearError = useAuthStore((state) => state.clearError)
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -30,15 +32,11 @@ const Login = () => {
     }
 
     setErrorMessage('')
-    setIsSubmitting(true)
+    clearError()
 
-    try {
-      await login(form.email.trim(), form.password)
+    const isLoggedIn = await login(form.email.trim(), form.password)
+    if (isLoggedIn) {
       navigate('/', { replace: true })
-    } catch (error) {
-      setErrorMessage(getFirebaseErrorMessage(error))
-    } finally {
-      setIsSubmitting(false)
     }
   }
 
@@ -56,8 +54,8 @@ const Login = () => {
             비밀번호
             <input id="login-password" name="password" type="password" value={form.password} onChange={handleChange} autoComplete="current-password" placeholder="비밀번호를 입력해주세요" />
           </label>
-          {errorMessage && <p className={styles.errorMessage} role="alert">{errorMessage}</p>}
-          <button type="submit" disabled={isSubmitting}>{isSubmitting ? '로그인 중...' : '로그인'}</button>
+          {(errorMessage || authError) && <p className={styles.errorMessage} role="alert">{errorMessage || authError}</p>}
+          <button type="submit" disabled={loading}>{loading ? '로그인 중...' : '로그인'}</button>
         </form>
         <p className={styles.authLink}>아직 회원이 아니신가요? <Link to="/signup">회원가입</Link></p>
       </div>

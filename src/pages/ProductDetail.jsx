@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import QuantityControl from '../components/QuantityControl'
+import ProductDescription from '../components/ProductDescription'
 import { addCartItem } from '../firebase/cartApi'
 import { auth } from '../firebase/firebase'
 import { addWishlistItem, deleteWishlistItem, isWishlistItem } from '../firebase/wishlistApi'
@@ -17,7 +18,10 @@ const ProductDetail = () => {
   const [isLiked, setIsLiked] = useState(false)
   const [isWishlistLoading, setIsWishlistLoading] = useState(false)
   const [cartMessage, setCartMessage] = useState('')
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false)
   const [wishlistMessage, setWishlistMessage] = useState('')
+  const [showFloatingPurchase, setShowFloatingPurchase] = useState(false)
+  const purchaseAreaRef = useRef(null)
   const user = useAuthStore((state) => state.user)
 
   useEffect(() => {
@@ -59,6 +63,38 @@ const ProductDetail = () => {
     }
   }, [product?.id, user?.uid])
 
+  useEffect(() => {
+    const updateFloatingPurchaseVisibility = () => {
+      const purchaseArea = purchaseAreaRef.current
+
+      if (!purchaseArea) return
+
+      setShowFloatingPurchase(purchaseArea.getBoundingClientRect().bottom < 0)
+    }
+
+    updateFloatingPurchaseVisibility()
+    window.addEventListener('scroll', updateFloatingPurchaseVisibility, { passive: true })
+
+    return () => window.removeEventListener('scroll', updateFloatingPurchaseVisibility)
+  }, [product?.id])
+
+  useEffect(() => {
+    if (!isCartDrawerOpen) return undefined
+
+    const previousOverflow = document.body.style.overflow
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setIsCartDrawerOpen(false)
+    }
+
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isCartDrawerOpen])
+
   if (isLoading) {
     return <p>상품을 불러오는 중입니다</p>
   }
@@ -76,6 +112,10 @@ const ProductDetail = () => {
   const totalPrice = quantity * discountedPrice
   const images = [product.image, ...(product.detailImages || [])]
   const isSoldOut = Number(product.stock) <= 0
+
+  const moveToPurchaseArea = () => {
+    purchaseAreaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   const addToCart = async () => {
     if (isSoldOut) {
@@ -101,6 +141,7 @@ const ProductDetail = () => {
         image: product.image,
       })
       setCartMessage('장바구니에 담았습니다. 마이페이지에서도 확인할 수 있습니다.')
+      setIsCartDrawerOpen(true)
     } catch {
       setCartMessage('장바구니를 서버에 저장하지 못했습니다. 보안 규칙과 로그인 상태를 확인해주세요.')
     }
@@ -164,7 +205,7 @@ const ProductDetail = () => {
             )}
           </div>
 
-          <div className={styles.infoArea}>
+          <div className={styles.infoArea} ref={purchaseAreaRef}>
             <p className={styles.category}>{product.category}</p>
             <h1>{product.name}</h1>
             <p className={styles.description}>{product.description}</p>
@@ -206,7 +247,63 @@ const ProductDetail = () => {
             {wishlistMessage && <p className={wishlistMessage.includes('되었습니다') ? styles.cartMessage : styles.cartError} role="status">{wishlistMessage}</p>}
           </div>
         </div>
+
+        <ProductDescription product={product} />
       </div>
+
+      {showFloatingPurchase && (
+        <aside className={styles.floatingPurchase} aria-label="상품 구매 바로가기">
+          <div className={styles.floatingPurchaseInner}>
+            <div className={styles.floatingProduct}>
+              <img src={product.image} alt="" />
+              <div>
+                <strong>{product.name}</strong>
+                <span>{product.category}</span>
+              </div>
+            </div>
+            <button type="button" onClick={moveToPurchaseArea}>
+              {isSoldOut ? '품절된 상품' : '구매하러 가기'}
+            </button>
+          </div>
+        </aside>
+      )}
+
+      {isCartDrawerOpen && (
+        <div className={styles.cartDrawerLayer} role="presentation">
+          <button
+            type="button"
+            className={styles.cartDrawerBackdrop}
+            aria-label="장바구니 안내 닫기"
+            onClick={() => setIsCartDrawerOpen(false)}
+          />
+          <aside className={styles.cartDrawer} role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title">
+            <button
+              type="button"
+              className={styles.cartDrawerClose}
+              aria-label="장바구니 안내 닫기"
+              onClick={() => setIsCartDrawerOpen(false)}
+            >
+              ×
+            </button>
+            <div className={styles.cartDrawerContent}>
+              <p>장바구니에 담았습니다.</p>
+              <h2 id="cart-drawer-title">장바구니 상품</h2>
+              <div className={styles.cartDrawerItem}>
+                <img src={product.image} alt={product.name} />
+                <div>
+                  <strong>{product.name}</strong>
+                  <span>수량 {quantity}개</span>
+                  <b>{totalPrice.toLocaleString()}원</b>
+                </div>
+              </div>
+            </div>
+            <div className={styles.cartDrawerActions}>
+              <Link to="/cart">장바구니 가기</Link>
+              <Link className={styles.directPurchaseLink} to="/cart">바로 구매하기</Link>
+            </div>
+          </aside>
+        </div>
+      )}
     </section>
   )
 }

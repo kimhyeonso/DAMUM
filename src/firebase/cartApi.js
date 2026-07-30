@@ -1,4 +1,4 @@
-import { collection, deleteDoc, doc, getDocs, runTransaction, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { collection, deleteDoc, doc, getDocs, onSnapshot, runTransaction, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { db } from './firebase'
 
 const getCartItemsCollection = (userId) => collection(db, 'carts', userId, 'items')
@@ -15,6 +15,12 @@ export const getCartItems = async (userId) => {
     }
   })
 }
+
+export const subscribeToCartCount = (userId, callback, onError) => onSnapshot(
+  getCartItemsCollection(userId),
+  (snapshot) => callback(snapshot.docs.reduce((total, item) => total + Number(item.data().quantity ?? 1), 0)),
+  onError,
+)
 
 export const addCartItem = async (userId, item) => {
   const itemRef = doc(db, 'carts', userId, 'items', String(item.productId))

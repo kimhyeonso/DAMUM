@@ -7,7 +7,7 @@
 .catalogHeader {
   display: block;
   margin-bottom: 32px;
-  color: #111111;
+  color: var(--color-brand);
 
   p {
     font-size: 13px;
@@ -17,7 +17,7 @@
   h2 {
     margin: 0;
     font-size: clamp(24px, 2.2vw, 34px);
-    font-weight: 500;
+    font-weight: 700;
     letter-spacing: -0.05em;
   }
 

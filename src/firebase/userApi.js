@@ -2,7 +2,12 @@ import { collection, doc, getDoc, getDocs, runTransaction, serverTimestamp, setD
 import { db } from './firebase'
 
 export const getUser = async (id) => { const item = await getDoc(doc(db, 'users', id)); return item.exists() ? { id: item.id, ...item.data() } : null }
-export const createUserProfile = (id, data) => setDoc(doc(db, 'users', id), data)
+export const createUserProfile = (id, { email, nickname }) => setDoc(doc(db, 'users', id), {
+  email: email ?? '',
+  nickname: nickname ?? '',
+  role: 'user',
+  createAt: serverTimestamp(),
+})
 export const updateUser = (id, data) => setDoc(doc(db, 'users', id), data, { merge: true })
 
 export const getUsersForAdmin = async () => {

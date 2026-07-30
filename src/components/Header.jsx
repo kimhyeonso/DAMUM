@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { logout } from '../firebase/authApi'
+import { subscribeToCartCount } from '../firebase/cartApi'
+import { subscribeToWishlistCount } from '../firebase/wishlistApi'
 import SearchBox from './SearchBox'
 import { useAuthStore } from '../store/authStore'
 import styles from './Header.module.scss'
@@ -29,24 +30,28 @@ const BagIcon = () => (
 
 const Header = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
-  const nickname = useAuthStore((state) => state.user?.nickname)
-  const role = useAuthStore((state) => state.user?.role)
+  const nickname = useAuthStore((state) => state.profile?.nickname ?? state.user?.nickname)
+  const role = useAuthStore((state) => state.profile?.role ?? state.user?.role)
+  const userId = useAuthStore((state) => state.user?.uid)
   const isAdmin = String(role ?? '').trim().toLowerCase() === 'admin'
-  const setUser = useAuthStore((state) => state.setUser)
-  const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const [cartCount, setCartCount] = useState(0)
+  const [wishlistCount, setWishlistCount] = useState(0)
 
-  const handleLogout = async () => {
-    setIsLoggingOut(true)
-
-    try {
-      await logout()
-      setUser(null)
-    } catch (error) {
-      window.alert('로그아웃 중 오류가 발생했습니다. 다시 시도해주세요.')
-    } finally {
-      setIsLoggingOut(false)
+  useEffect(() => {
+    if (!userId) {
+      setCartCount(0)
+      setWishlistCount(0)
+      return undefined
     }
-  }
+
+    const unsubscribeCart = subscribeToCartCount(userId, setCartCount, () => setCartCount(0))
+    const unsubscribeWishlist = subscribeToWishlistCount(userId, setWishlistCount, () => setWishlistCount(0))
+
+    return () => {
+      unsubscribeCart()
+      unsubscribeWishlist()
+    }
+  }, [userId])
 
   return (
     <header className={styles.header}>
@@ -62,20 +67,19 @@ const Header = () => {
               <span className={styles.nickname}>{nickname ? `${nickname}님` : '회원님'}</span>
               <Link to="/mypage">마이페이지</Link>
               {isAdmin && <Link to="/admin">관리자</Link>}
-              <button type="button" onClick={handleLogout} disabled={isLoggingOut}>
-                {isLoggingOut ? '로그아웃 중...' : '로그아웃'}
-              </button>
             </>
           ) : (
             <Link className={styles.utilityIcon} to="/login" aria-label="로그인">
               <UserIcon />
             </Link>
           )}
-          <Link className={styles.utilityIcon} to="/wishlist" aria-label="찜한 상품">
+          <Link className={styles.utilityIcon} to="/wishlist" aria-label={`찜한 상품 ${wishlistCount}개`}>
             <HeartIcon />
+            <span className={styles.iconCount} aria-hidden="true">{wishlistCount > 99 ? '99+' : wishlistCount}</span>
           </Link>
-          <Link className={styles.utilityIcon} to="/cart" aria-label="장바구니">
+          <Link className={styles.utilityIcon} to="/cart" aria-label={`장바구니 ${cartCount}개`}>
             <BagIcon />
+            <span className={styles.iconCount} aria-hidden="true">{cartCount > 99 ? '99+' : cartCount}</span>
           </Link>
         </nav>
       </div>

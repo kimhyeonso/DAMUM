@@ -17,9 +17,28 @@
   padding-top: 20px;
 }
 
+.ranked {
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 36px) / 5);
+  grid-template-columns: none;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+
+  > * {
+    scroll-snap-align: start;
+  }
+}
+
 @media (max-width: 1024px) {
   .productList {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .ranked {
+    grid-auto-columns: calc((100% - 18px) / 3);
+    grid-template-columns: none;
   }
 }
 
@@ -27,6 +46,11 @@
   .productList {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px 8px;
+  }
+
+  .ranked {
+    grid-auto-columns: calc((100% - 8px) / 2);
+    grid-template-columns: none;
   }
 
   .catalog {

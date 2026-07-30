@@ -11,7 +11,7 @@
 
   p {
     color: var(--color-brand);
-    font-size: 0.78rem;
+    font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.12em;
   }
@@ -44,7 +44,7 @@
 
   span {
     color: #72776f;
-    font-size: 0.82rem;
+    font-size: 13px;
   }
 }
 
@@ -70,7 +70,7 @@
   button {
     color: #72776f;
     font: inherit;
-    font-size: 0.82rem;
+    font-size: 13px;
     text-decoration: underline;
     text-underline-offset: 3px;
 
@@ -78,6 +78,26 @@
       color: #aaaaaa;
       cursor: wait;
     }
+  }
+}
+
+.itemActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.addToCartButton {
+  padding: 8px 10px;
+  border: 1px solid var(--color-brand);
+  color: var(--color-brand) !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-brand);
+    color: #ffffff !important;
   }
 }
 
@@ -114,7 +134,8 @@
 }
 
 .statusMessage,
-.errorMessage {
+.errorMessage,
+.successMessage {
   padding: 28px;
   border: 1px solid rgb(48 70 61 / 20%);
   color: #5f675e;
@@ -123,6 +144,10 @@
 
 .errorMessage {
   color: #b53b3b;
+}
+
+.successMessage {
+  color: var(--color-brand);
 }
 
 @media (max-width: 800px) {
@@ -140,5 +165,11 @@
   .itemList li {
     grid-template-columns: 72px minmax(0, 1fr) auto;
     gap: 12px;
+  }
+
+  .itemActions {
+    align-items: flex-end;
+    flex-direction: column;
+    gap: 8px;
   }
 }

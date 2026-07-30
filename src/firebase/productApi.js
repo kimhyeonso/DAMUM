@@ -27,6 +27,23 @@ const getJsonProducts = async () => {
   return response.json()
 }
 
+const hasSameProductId = (firstId, secondId) => (
+  String(firstId) === String(secondId)
+  || (Number.isFinite(Number(firstId)) && Number(firstId) === Number(secondId))
+)
+
+const withJsonDetailDescriptionImage = (product, jsonProducts) => {
+  const productKey = product.legacyId ?? product.id
+  const jsonProduct = jsonProducts.find((item) => hasSameProductId(item.id, productKey))
+
+  if (!jsonProduct?.detailDescriptionImage || product.detailDescriptionImage) return product
+
+  return {
+    ...product,
+    detailDescriptionImage: jsonProduct.detailDescriptionImage,
+  }
+}
+
 export const getProducts = async () => {
   const snapshot = await getDocs(products)
   return snapshot.docs.map(toProduct).sort((first, second) => toTime(second.createAt) - toTime(first.createAt))
@@ -49,19 +66,20 @@ export const getProduct = async (id) => {
 }
 
 export const getCatalogProduct = async (id) => {
+  const jsonProducts = await getJsonProducts()
+
   try {
     const firestoreProduct = await getProduct(id)
-    if (firestoreProduct) return firestoreProduct
+    if (firestoreProduct) return withJsonDetailDescriptionImage(firestoreProduct, jsonProducts)
 
     const firestoreProducts = await getProducts()
-    const migratedProduct = firestoreProducts.find((item) => String(item.legacyId) === String(id))
-    if (migratedProduct) return migratedProduct
+    const migratedProduct = firestoreProducts.find((item) => hasSameProductId(item.legacyId, id))
+    if (migratedProduct) return withJsonDetailDescriptionImage(migratedProduct, jsonProducts)
   } catch {
     // 마이그레이션 전 기존 상세 페이지를 유지합니다.
   }
 
-  const jsonProducts = await getJsonProducts()
-  return jsonProducts.find((item) => String(item.id) === String(id)) || null
+  return jsonProducts.find((item) => hasSameProductId(item.id, id)) || null
 }
 
 export const createProduct = async (data) => {

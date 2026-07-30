@@ -1,9 +1,6 @@
 import { useState } from 'react'
-import { serverTimestamp } from 'firebase/firestore'
 import { Link, useNavigate } from 'react-router-dom'
-import { signUp } from '../firebase/authApi'
-import { createUserProfile } from '../firebase/userApi'
-import { getFirebaseErrorMessage } from '../utils/firebaseError'
+import { useAuthStore } from '../store/authStore'
 import { isRequired, isValidEmail, isValidPassword } from '../utils/validation'
 import styles from './SignUp.module.scss'
 
@@ -11,7 +8,10 @@ const SignUp = () => {
   const navigate = useNavigate()
   const [form, setForm] = useState({ email: '', nickname: '', password: '', passwordConfirm: '' })
   const [errorMessage, setErrorMessage] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const signup = useAuthStore((state) => state.signup)
+  const loading = useAuthStore((state) => state.loading)
+  const authError = useAuthStore((state) => state.error)
+  const clearError = useAuthStore((state) => state.clearError)
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -36,21 +36,11 @@ const SignUp = () => {
     }
 
     setErrorMessage('')
-    setIsSubmitting(true)
+    clearError()
 
-    try {
-      const credential = await signUp(form.email.trim(), form.password)
-      await createUserProfile(credential.user.uid, {
-        email: credential.user.email,
-        nickname: form.nickname.trim(),
-        role: 'user',
-        createAt: serverTimestamp(),
-      })
+    const isSignedUp = await signup(form.email.trim(), form.password, form.nickname.trim())
+    if (isSignedUp) {
       navigate('/', { replace: true })
-    } catch (error) {
-      setErrorMessage(getFirebaseErrorMessage(error))
-    } finally {
-      setIsSubmitting(false)
     }
   }
 
@@ -67,8 +57,8 @@ const SignUp = () => {
           <label htmlFor="signup-nickname">닉네임<input id="signup-nickname" name="nickname" type="text" value={form.nickname} onChange={handleChange} autoComplete="nickname" placeholder="닉네임을 입력해주세요" /></label>
           <label htmlFor="signup-password">비밀번호<input id="signup-password" name="password" type="password" value={form.password} onChange={handleChange} autoComplete="new-password" placeholder="8자 이상 입력해주세요" /></label>
           <label htmlFor="signup-password-confirm">비밀번호 확인<input id="signup-password-confirm" name="passwordConfirm" type="password" value={form.passwordConfirm} onChange={handleChange} autoComplete="new-password" placeholder="비밀번호를 한 번 더 입력해주세요" /></label>
-          {errorMessage && <p className={styles.errorMessage} role="alert">{errorMessage}</p>}
-          <button type="submit" disabled={isSubmitting}>{isSubmitting ? '가입 중...' : '회원가입'}</button>
+          {(errorMessage || authError) && <p className={styles.errorMessage} role="alert">{errorMessage || authError}</p>}
+          <button type="submit" disabled={loading}>{loading ? '가입 중...' : '회원가입'}</button>
         </form>
         <p className={styles.authLink}>이미 회원이신가요? <Link to="/login">로그인</Link></p>
       </div>

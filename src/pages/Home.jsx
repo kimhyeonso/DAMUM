@@ -23,7 +23,7 @@ const Home = () => {
     const loadHome = async () => {
       const productsData = await getCatalogProducts()
       const recommendedProducts = productsData.filter((item) => item.isRecommended)
-      setHomePros((recommendedProducts.length > 0 ? recommendedProducts : productsData).slice(0, 5))
+      setHomePros(recommendedProducts.length > 0 ? recommendedProducts : productsData)
     }
 
     loadHome()
@@ -58,7 +58,7 @@ const Home = () => {
           <h2>BEST SELLERS</h2>
         </div>
         <div className={styles.productContent}>
-          <ProductList products={homePros} />
+          <ProductList products={homePros} showRanking />
         </div>
         <div className={styles.productViewAll}>
           <Link to="/products">VIEW ALL <span aria-hidden="true">→</span></Link>

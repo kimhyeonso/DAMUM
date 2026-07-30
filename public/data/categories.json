@@ -3,7 +3,7 @@
     "id": 1,
     "name": "전체보기",
     "path": "/products",
-    "image": null
+    "image": "/img/category/category-00.png"
   },
   {
     "id": 2,

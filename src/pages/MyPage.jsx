@@ -57,6 +57,7 @@ const getWishlistPrice = (item) => Number(item.price ?? 0)
 const MyPage = () => {
   const user = useAuthStore((state) => state.user)
   const setUser = useAuthStore((state) => state.setUser)
+  const logout = useAuthStore((state) => state.logout)
   const [profile, setProfile] = useState(null)
   const [nickname, setNickname] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -75,6 +76,8 @@ const MyPage = () => {
   const [isWishlistLoading, setIsWishlistLoading] = useState(true)
   const [wishlistError, setWishlistError] = useState('')
   const [deletingWishlistItemId, setDeletingWishlistItemId] = useState('')
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
   useEffect(() => {
     let isActive = true
@@ -235,6 +238,7 @@ const MyPage = () => {
       setUser({ ...user, nickname: trimmedNickname })
       setNewPassword('')
       setEditMessage('회원 정보가 수정되었습니다.')
+      setIsEditModalOpen(false)
     } catch (error) {
       setEditMessage(getFirebaseErrorMessage(error))
     } finally {
@@ -276,6 +280,19 @@ const MyPage = () => {
     }
   }
 
+  const handleLogout = async () => {
+    setIsLoggingOut(true)
+
+    try {
+      const isLoggedOut = await logout()
+      if (!isLoggedOut) throw new Error('logout failed')
+    } catch {
+      window.alert('로그아웃 중 오류가 발생했습니다. 다시 시도해주세요.')
+    } finally {
+      setIsLoggingOut(false)
+    }
+  }
+
   const cartTotal = cartItems.reduce((total, item) => total + getCartPrice(item) * getCartQuantity(item), 0)
 
   return (
@@ -287,49 +304,47 @@ const MyPage = () => {
       </header>
 
       <div className={styles.dashboard}>
-        <article className={`${styles.panel} ${styles.memberPanel}`}>
-          <p className={styles.panelLabel}>MEMBER</p>
-          <h2>회원 정보</h2>
+        <article className={`${styles.summaryCard} ${styles.memberCard}`}>
+          <div className={styles.sectionHeading}>
+            <div>
+              <p>MEMBER</p>
+              <h2>회원 정보</h2>
+            </div>
+          </div>
           {isProfileLoading && <p className={styles.statusMessage} role="status">회원 정보를 불러오고 있습니다.</p>}
           {profileError && <p className={styles.errorMessage} role="alert">{profileError}</p>}
           {!isProfileLoading && !profileError && (
-            <dl>
+            <dl className={styles.memberDetails}>
               <div><dt>닉네임</dt><dd>{profile.nickname}</dd></div>
               <div><dt>이메일</dt><dd>{profile.email}</dd></div>
               <div><dt>가입일</dt><dd>{formatKoreanDate(profile.createAt)}</dd></div>
             </dl>
           )}
-        </article>
-
-        <article className={styles.panel}>
-          <p className={styles.panelLabel}>PROFILE</p>
-          <h2>회원 정보 수정</h2>
-          <form className={styles.profileForm} onSubmit={handleSubmit}>
-            <label htmlFor="profile-nickname">
-              닉네임
-              <input id="profile-nickname" value={nickname} onChange={(event) => setNickname(event.target.value)} disabled={isProfileLoading || isSaving} />
-            </label>
-            <label htmlFor="profile-password">
-              새 비밀번호
-              <input id="profile-password" type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} autoComplete="new-password" placeholder="변경할 때만 입력하세요" disabled={isProfileLoading || isSaving} />
-            </label>
-            {editMessage && <p className={editMessage.includes('수정되었습니다') ? styles.successMessage : styles.errorMessage} role="status">{editMessage}</p>}
-            <button type="submit" disabled={isProfileLoading || Boolean(profileError) || isSaving}>
-              {isSaving ? '저장 중...' : '회원 정보 저장'}
+          <div className={styles.memberActions}>
+            <button type="button" onClick={handleLogout} disabled={isLoggingOut}>
+              {isLoggingOut ? '로그아웃 중...' : '로그아웃'}
             </button>
-          </form>
+            <button type="button" onClick={() => { setEditMessage(''); setIsEditModalOpen(true) }} disabled={isProfileLoading || Boolean(profileError)}>
+              회원 정보 수정
+            </button>
+          </div>
         </article>
 
-        <article className={styles.panel}>
-          <p className={styles.panelLabel}>ORDER</p>
-          <h2>주문 내역</h2>
+        <article className={styles.summaryCard}>
+          <div className={styles.sectionHeading}>
+            <div>
+              <p>ORDER</p>
+              <h2>주문 내역</h2>
+            </div>
+            <Link to="/products">상품 목록으로 이동 <span aria-hidden="true">→</span></Link>
+          </div>
           {isOrdersLoading && <p className={styles.statusMessage} role="status">주문 내역을 불러오고 있습니다.</p>}
           {ordersError && <p className={styles.errorMessage} role="alert">{ordersError}</p>}
           {!isOrdersLoading && !ordersError && orders.length === 0 && (
-            <p className={styles.emptyOrder}>아직 주문 내역이 없습니다.</p>
+            <p className={styles.emptyMessage}>아직 주문 내역이 없습니다.</p>
           )}
           {!isOrdersLoading && !ordersError && orders.length > 0 && (
-            <ul className={styles.orderList}>
+            <ul className={styles.summaryList}>
               {orders.map((order) => (
                 <li key={order.id}>
                   <strong>{getOrderProductName(order)}</strong>
@@ -340,20 +355,24 @@ const MyPage = () => {
               ))}
             </ul>
           )}
-          <Link className={styles.productLink} to="/products">상품 목록으로 이동</Link>
         </article>
 
-        <article className={styles.panel}>
-          <p className={styles.panelLabel}>CART</p>
-          <h2>장바구니</h2>
+        <article className={styles.summaryCard}>
+          <div className={styles.sectionHeading}>
+            <div>
+              <p>CART</p>
+              <h2>장바구니</h2>
+            </div>
+            <Link to="/cart">장바구니로 이동 <span aria-hidden="true">→</span></Link>
+          </div>
           {isCartLoading && <p className={styles.statusMessage} role="status">장바구니를 불러오고 있습니다.</p>}
           {cartError && <p className={styles.errorMessage} role="alert">{cartError}</p>}
           {!isCartLoading && !cartError && cartItems.length === 0 && (
-            <p className={styles.emptyCart}>장바구니가 비어 있습니다.</p>
+            <p className={styles.emptyMessage}>장바구니가 비어 있습니다.</p>
           )}
           {!isCartLoading && !cartError && cartItems.length > 0 && (
             <>
-              <ul className={styles.cartList}>
+              <ul className={styles.summaryList}>
                 {cartItems.map((item) => {
                   const itemPrice = getCartPrice(item)
                   const itemQuantity = getCartQuantity(item)
@@ -364,32 +383,36 @@ const MyPage = () => {
                       <span>가격 {formatPrice(itemPrice)}</span>
                       <span>수량 {itemQuantity}개</span>
                       <b>{formatPrice(itemPrice * itemQuantity)}</b>
-                      <button type="button" onClick={() => handleCartItemDelete(item)} disabled={deletingCartItemId === item.id}>
+                      <button className={styles.deleteButton} type="button" onClick={() => handleCartItemDelete(item)} disabled={deletingCartItemId === item.id}>
                         {deletingCartItemId === item.id ? '삭제 중...' : '삭제'}
                       </button>
                     </li>
                   )
                 })}
               </ul>
-              <div className={styles.cartTotal}>
+              <div className={styles.totalRow}>
                 <span>전체 합계</span>
                 <strong>{formatPrice(cartTotal)}</strong>
               </div>
             </>
           )}
-          <Link className={styles.cartLink} to="/cart">장바구니로 이동</Link>
         </article>
 
-        <article className={styles.panel}>
-          <p className={styles.panelLabel}>WISHLIST</p>
-          <h2>찜</h2>
+        <article className={styles.summaryCard}>
+          <div className={styles.sectionHeading}>
+            <div>
+              <p>WISHLIST</p>
+              <h2>찜</h2>
+            </div>
+            <Link to="/wishlist">찜한 상품으로 이동 <span aria-hidden="true">→</span></Link>
+          </div>
           {isWishlistLoading && <p className={styles.statusMessage} role="status">찜한 상품을 불러오고 있습니다.</p>}
           {wishlistError && <p className={styles.errorMessage} role="alert">{wishlistError}</p>}
           {!isWishlistLoading && !wishlistError && wishlistItems.length === 0 && (
-            <p className={styles.emptyWishlist}>찜한 상품이 없습니다.</p>
+            <p className={styles.emptyMessage}>찜한 상품이 없습니다.</p>
           )}
           {!isWishlistLoading && !wishlistError && wishlistItems.length > 0 && (
-            <ul className={styles.wishlistList}>
+            <ul className={`${styles.summaryList} ${styles.wishlistList}`}>
               {wishlistItems.map((item) => (
                 <li key={item.id}>
                   <img src={item.image} alt="" />
@@ -397,16 +420,41 @@ const MyPage = () => {
                     <strong>{getWishlistProductName(item)}</strong>
                     <span>{formatPrice(getWishlistPrice(item))}</span>
                   </div>
-                  <button type="button" onClick={() => handleWishlistItemDelete(item)} disabled={deletingWishlistItemId === item.id}>
+                  <button className={styles.deleteButton} type="button" onClick={() => handleWishlistItemDelete(item)} disabled={deletingWishlistItemId === item.id}>
                     {deletingWishlistItemId === item.id ? '삭제 중...' : '삭제'}
                   </button>
                 </li>
               ))}
             </ul>
           )}
-          <Link className={styles.productLink} to="/products">상품 목록으로 이동</Link>
         </article>
       </div>
+
+      {isEditModalOpen && (
+        <div className={styles.modalOverlay} role="presentation" onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setIsEditModalOpen(false)
+        }}>
+          <section className={styles.editModal} role="dialog" aria-modal="true" aria-labelledby="profile-modal-title">
+            <button type="button" className={styles.modalClose} onClick={() => setIsEditModalOpen(false)} aria-label="회원 정보 수정 닫기">×</button>
+            <p>PROFILE</p>
+            <h2 id="profile-modal-title">회원 정보 수정</h2>
+            <form className={styles.profileForm} onSubmit={handleSubmit}>
+              <label htmlFor="profile-nickname">
+                닉네임
+                <input id="profile-nickname" value={nickname} onChange={(event) => setNickname(event.target.value)} disabled={isSaving} />
+              </label>
+              <label htmlFor="profile-password">
+                새 비밀번호
+                <input id="profile-password" type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} autoComplete="new-password" placeholder="변경할 때만 입력하세요" disabled={isSaving} />
+              </label>
+              {editMessage && <p className={editMessage.includes('수정되었습니다') ? styles.successMessage : styles.errorMessage} role="status">{editMessage}</p>}
+              <button type="submit" disabled={isSaving}>
+                {isSaving ? '저장 중...' : '회원 정보 저장'}
+              </button>
+            </form>
+          </section>
+        </div>
+      )}
     </section>
   )
 }
