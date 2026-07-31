@@ -26,6 +26,7 @@ const Home = () => {
   const [isBannerTransitioning, setIsBannerTransitioning] = useState(true)
   const [brandImageIndex, setBrandImageIndex] = useState(0)
   const [activeSocialIndex, setActiveSocialIndex] = useState(null)
+  const [cartDrawerItem, setCartDrawerItem] = useState(null)
 
   useEffect(() => {
     const loadHome = async () => {
@@ -57,12 +58,41 @@ const Home = () => {
   }, [activeSocialIndex])
 
   useEffect(() => {
+    if (!cartDrawerItem) return undefined
+
+    const previousOverflow = document.body.style.overflow
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setCartDrawerItem(null)
+    }
+
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [cartDrawerItem])
+
+  useEffect(() => {
     const timer = setInterval(() => {
-      setBannerIndex((index) => index + 1)
+      setBannerIndex((index) => (index >= PRODUCT_BANNERS.length ? 0 : index + 1))
     }, 3000)
 
     return () => clearInterval(timer)
   }, [])
+
+  useEffect(() => {
+    if (bannerIndex !== PRODUCT_BANNERS.length) return undefined
+
+    const fallbackTimer = window.setTimeout(() => {
+      setIsBannerTransitioning(false)
+      setBannerIndex(0)
+      requestAnimationFrame(() => requestAnimationFrame(() => setIsBannerTransitioning(true)))
+    }, 700)
+
+    return () => window.clearTimeout(fallbackTimer)
+  }, [bannerIndex])
 
   const handleBannerTransitionEnd = (event) => {
     if (event.target !== event.currentTarget || bannerIndex !== PRODUCT_BANNERS.length) {
@@ -93,7 +123,7 @@ const Home = () => {
           <h2>BEST SELLERS</h2>
         </div>
         <div className={styles.productContent}>
-          <ProductList products={homePros} showRanking />
+          <ProductList products={homePros} showRanking onCartAdded={setCartDrawerItem} />
         </div>
         <div className={styles.productViewAll}>
           <Link to="/products">VIEW ALL <span aria-hidden="true">→</span></Link>
@@ -215,6 +245,43 @@ const Home = () => {
               <span className={styles.socialModalDate}>DAMUM OFFICIAL</span>
             </div>
           </section>
+        </div>
+      )}
+
+      {cartDrawerItem && (
+        <div className={styles.cartDrawerLayer} role="presentation">
+          <button
+            type="button"
+            className={styles.cartDrawerBackdrop}
+            aria-label="장바구니 안내 닫기"
+            onClick={() => setCartDrawerItem(null)}
+          />
+          <aside className={styles.cartDrawer} role="dialog" aria-modal="true" aria-labelledby="home-cart-drawer-title">
+            <button
+              type="button"
+              className={styles.cartDrawerClose}
+              aria-label="장바구니 안내 닫기"
+              onClick={() => setCartDrawerItem(null)}
+            >
+              ×
+            </button>
+            <div className={styles.cartDrawerContent}>
+              <p>장바구니에 담았습니다.</p>
+              <h2 id="home-cart-drawer-title">장바구니 상품</h2>
+              <div className={styles.cartDrawerItem}>
+                <img src={cartDrawerItem.image} alt={cartDrawerItem.name} />
+                <div>
+                  <strong>{cartDrawerItem.name}</strong>
+                  <span>수량 {cartDrawerItem.quantity}개</span>
+                  <b>{cartDrawerItem.price.toLocaleString()}원</b>
+                </div>
+              </div>
+            </div>
+            <div className={styles.cartDrawerActions}>
+              <Link to="/cart" onClick={() => setCartDrawerItem(null)}>장바구니 가기</Link>
+              <Link className={styles.directPurchaseLink} to="/cart" onClick={() => setCartDrawerItem(null)}>바로 구매하기</Link>
+            </div>
+          </aside>
         </div>
       )}
     </div>

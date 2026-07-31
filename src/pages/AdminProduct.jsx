@@ -12,6 +12,7 @@ const initialForm = {
   stock: '',
   lowStockThreshold: String(DEFAULT_LOW_STOCK_THRESHOLD),
   image: '',
+  detailDescriptionImage: '',
   description: '',
   isRecommended: false,
 }
@@ -25,6 +26,7 @@ const toFormData = (product) => ({
   stock: String(product.stock ?? ''),
   lowStockThreshold: String(product.lowStockThreshold ?? DEFAULT_LOW_STOCK_THRESHOLD),
   image: product.image ?? '',
+  detailDescriptionImage: product.detailDescriptionImage ?? '',
   description: product.description ?? '',
   isRecommended: Boolean(product.isRecommended),
 })
@@ -151,6 +153,7 @@ const AdminProduct = () => {
         stock,
         lowStockThreshold,
         image,
+        detailDescriptionImage: form.detailDescriptionImage.trim(),
         description: form.description.trim(),
         isRecommended: form.isRecommended,
       }
@@ -372,6 +375,10 @@ const AdminProduct = () => {
           <label className={styles.fullWidth}>
             <span>대표 이미지 URL</span>
             <input name="image" value={form.image} onChange={handleChange} placeholder="/img/products/product-main.jpg 또는 외부 이미지 URL" />
+          </label>
+          <label className={styles.fullWidth}>
+            <span>상세페이지 이미지 URL</span>
+            <input name="detailDescriptionImage" value={form.detailDescriptionImage} onChange={handleChange} placeholder="/img/productDetail/productDetail-01.png 또는 외부 이미지 URL" />
           </label>
           <label className={styles.fullWidth}>
             <span>설명</span>

@@ -6,7 +6,7 @@ import { addWishlistItem, deleteWishlistItem, isWishlistItem } from '../firebase
 import { useAuthStore } from '../store/authStore'
 import styles from './ProductCard.module.scss'
 
-const ProductCard = ({product, variant, rank}) => {
+const ProductCard = ({product, variant, rank, onCartAdded}) => {
   const [isLiked, setIsLiked] = useState(false)
   const [isWishlistLoading, setIsWishlistLoading] = useState(false)
   const [isCartLoading, setIsCartLoading] = useState(false)
@@ -98,6 +98,12 @@ const ProductCard = ({product, variant, rank}) => {
         image: product.image,
       })
       setIsCartAdded(true)
+      onCartAdded?.({
+        image: product.image,
+        name: product.name,
+        price: disPrice,
+        quantity: 1,
+      })
     } catch {
       window.alert('장바구니에 담지 못했습니다. 잠시 후 다시 시도해주세요.')
     } finally {

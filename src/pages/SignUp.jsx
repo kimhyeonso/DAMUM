@@ -47,11 +47,12 @@ const SignUp = () => {
   return (
     <section className={styles.signUp}>
       <div className={styles.authCard}>
-        
         <h1>회원가입</h1>
-        <p>3천원 쿠폰 증정💸</p>
-        <p>카플친 추가 고객 한정</p>
-        <img src="/img/banner/signbanner.png" alt="쿠폰 이미지" />
+        <div className={styles.promotion}>
+          <p>3천원 쿠폰 증정💸</p>
+          <p>카플친 추가 고객 한정</p>
+          <img src="/img/banner/signbanner.png" alt="3천원 쿠폰 증정 안내" />
+        </div>
         <form className={styles.authForm} onSubmit={handleSubmit} noValidate>
           <label htmlFor="signup-email">이메일<input id="signup-email" name="email" type="email" value={form.email} onChange={handleChange} autoComplete="email" placeholder="example@email.com" /></label>
           <label htmlFor="signup-nickname">닉네임<input id="signup-nickname" name="nickname" type="text" value={form.nickname} onChange={handleChange} autoComplete="nickname" placeholder="닉네임을 입력해주세요" /></label>

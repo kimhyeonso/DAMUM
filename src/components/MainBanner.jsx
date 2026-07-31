@@ -38,7 +38,18 @@ const MainBanner = () => {
 
   return (
     <section className={styles.mainBanner}>
-      <img key={currentBanner.id} src={currentBanner.image} alt="banners" />
+      <div className={styles.bannerViewport}>
+        <div
+          className={styles.bannerTrack}
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
+          {banners.map((banner) => (
+            <div key={banner.id} className={styles.bannerSlide}>
+              <img src={banner.image} alt={banner.title} />
+            </div>
+          ))}
+        </div>
+      </div>
       <div className={styles.overlay}>
         {/* 배너 문구 */}
         <div key={`text-currentBanner.id`} className={styles.textBox}>

@@ -1,5 +1,5 @@
-import React from 'react'
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
+import React, { useEffect, useLayoutEffect } from 'react'
+import { BrowserRouter, Route, Routes, Navigate, useLocation } from 'react-router-dom'
 import Header from './components/Header' 
 import Footer from './components/Footer' 
 import Home from './pages/Home'
@@ -34,6 +34,71 @@ import './App.css'
 
 const App = () => {
   useAuth()
+  const { pathname } = useLocation()
+
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+  }, [pathname])
+
+  useEffect(() => {
+    const content = document.querySelector('main.content')
+
+    if (!content || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
+
+    const revealSelector = 'section:not([role="dialog"]), article'
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return
+
+        entry.target.classList.add('is-scroll-revealed')
+        observer.unobserve(entry.target)
+      })
+    }, {
+      threshold: 0.12,
+      rootMargin: '0px 0px -48px',
+    })
+
+    const registerReveal = (element) => {
+      if (
+        !(element instanceof HTMLElement)
+        || element.parentElement === content
+        || element.closest('[role="dialog"]')
+      ) return
+
+      if (!element.classList.contains('scroll-reveal')) {
+        element.classList.add('scroll-reveal')
+      }
+
+      if (!element.classList.contains('is-scroll-revealed')) {
+        observer.observe(element)
+      }
+    }
+
+    const registerWithin = (root) => {
+      if (!(root instanceof HTMLElement)) return
+
+      if (root.matches(revealSelector)) registerReveal(root)
+      root.querySelectorAll(revealSelector).forEach(registerReveal)
+    }
+
+    content.querySelectorAll(':scope > .scroll-reveal').forEach((element) => {
+      element.classList.remove('scroll-reveal', 'is-scroll-revealed')
+    })
+    registerWithin(content)
+
+    const mutationObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => registerWithin(node))
+      })
+    })
+
+    mutationObserver.observe(content, { childList: true, subtree: true })
+
+    return () => {
+      observer.disconnect()
+      mutationObserver.disconnect()
+    }
+  }, [pathname])
 
   return (
     <div>

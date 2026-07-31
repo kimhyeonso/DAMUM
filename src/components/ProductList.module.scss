@@ -22,6 +22,7 @@
   grid-auto-columns: calc((100% - 36px) / 5);
   grid-template-columns: none;
   overflow-x: auto;
+  overflow-y: hidden;
   padding-bottom: 10px;
   scroll-snap-type: x proximity;
   scrollbar-width: thin;
