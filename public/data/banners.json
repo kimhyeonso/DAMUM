@@ -9,15 +9,15 @@
   {
     "id": 2,
     "image": "/img/banner/banner02.png",
-    "eyebrow": "WEEKLY SALE",
-    "title": "이번주 인기상품 특별할인",
-    "description": "놓치기 아쉬운 베스트 상품을 합리적인 가격으로 준비했습니다."
+    "eyebrow": "Meet the Aritist",
+    "title": "도자기 아티스트를 만나다",
+    "description": "손으로 빛고 불의 온도로 완성한 그릇"
   },
   {
     "id": 3,
     "image": "/img/banner/banner03.png",
-    "eyebrow": "FREE DELIVERY",
-    "title": "5만원 이상 무료배송",
-    "description": "필요한 상품을 배송비 부담 없이 쇼핑하세요."
+    "eyebrow": "PLATING STORY",
+    "title": "손 끝에서 완성되는 한 접시",
+    "description": "요리사의 프레이팅과 가족의 마음을 담는 그릇."
   }
 ]
