@@ -118,6 +118,8 @@ const Cart = () => {
         <EmptyMessage
           title="장바구니가 비어있습니다"
           description="마음에 드는 상품을 장바구니에 담아보세요"
+          actionLabel="상품 둘러보기"
+          actionTo="/products"
         />
       ) : !isLoading && !errorMessage && (
         <div className={styles.cartContent}>

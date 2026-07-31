@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import CartSuccessDrawer from '../components/CartSuccessDrawer'
 import EmptyMessage from '../components/EmptyMessage'
 import { addCartItem } from '../firebase/cartApi'
 import { getCatalogProduct } from '../firebase/productApi'
@@ -13,8 +14,10 @@ const Wishlist = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
   const [deletingItemId, setDeletingItemId] = useState('')
+  const [isClearing, setIsClearing] = useState(false)
   const [addingItemId, setAddingItemId] = useState('')
   const [cartMessage, setCartMessage] = useState('')
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false)
 
   useEffect(() => {
     let isActive = true
@@ -59,6 +62,23 @@ const Wishlist = () => {
     }
   }
 
+  const clearWishlist = async () => {
+    if (wishlistItems.length === 0 || !window.confirm('찜한 상품을 모두 삭제하시겠습니까?')) return
+
+    setErrorMessage('')
+    setCartMessage('')
+    setIsClearing(true)
+
+    try {
+      await Promise.all(wishlistItems.map((item) => deleteWishlistItem(user.uid, item.id)))
+      setWishlistItems([])
+    } catch {
+      setErrorMessage('찜한 상품을 모두 삭제하지 못했습니다. 잠시 후 다시 시도해주세요.')
+    } finally {
+      setIsClearing(false)
+    }
+  }
+
   const addWishlistItemToCart = async (item) => {
     const productId = item.productId ?? item.id
     const productName = item.name || item.productName || '선택한 상품'
@@ -89,6 +109,7 @@ const Wishlist = () => {
         stock: product.stock,
         image: product.image ?? item.image,
       })
+      setIsCartDrawerOpen(true)
 
       try {
         await deleteWishlistItem(user.uid, item.id)
@@ -119,12 +140,19 @@ const Wishlist = () => {
         <EmptyMessage
           title="찜한 상품이 없습니다"
           description="관심 있는 상품을 찜해보세요"
+          actionLabel="상품 둘러보기"
+          actionTo="/products"
         />
       ) : !isLoading && !errorMessage && (
         <div className={styles.itemArea}>
           <div className={styles.itemAreaHeader}>
             <strong>찜한 상품</strong>
-            <span>상품을 클릭하면 상세 페이지로 이동합니다.</span>
+            <div className={styles.headerActions}>
+              <span>상품을 클릭하면 상세 페이지로 이동합니다.</span>
+              <button type="button" onClick={clearWishlist} disabled={isClearing}>
+                {isClearing ? '삭제 중...' : '전체 삭제'}
+              </button>
+            </div>
           </div>
           <ul className={styles.itemList}>
             {wishlistItems.map((item) => {
@@ -141,10 +169,10 @@ const Wishlist = () => {
                     <strong>{Number(item.price ?? 0).toLocaleString('ko-KR')}원</strong>
                   </div>
                   <div className={styles.itemActions}>
-                    <button type="button" className={styles.addToCartButton} onClick={() => addWishlistItemToCart(item)} disabled={addingItemId === item.id}>
+                    <button type="button" className={styles.addToCartButton} onClick={() => addWishlistItemToCart(item)} disabled={addingItemId === item.id || isClearing}>
                       {addingItemId === item.id ? '담는 중...' : '장바구니 담기'}
                     </button>
-                    <button type="button" onClick={() => removeWishlistItem(item)} disabled={deletingItemId === item.id}>
+                    <button type="button" onClick={() => removeWishlistItem(item)} disabled={deletingItemId === item.id || isClearing}>
                       {deletingItemId === item.id ? '삭제 중...' : '삭제'}
                     </button>
                   </div>
@@ -154,6 +182,7 @@ const Wishlist = () => {
           </ul>
         </div>
       )}
+      <CartSuccessDrawer isOpen={isCartDrawerOpen} onClose={() => setIsCartDrawerOpen(false)} />
     </section>
   )
 }

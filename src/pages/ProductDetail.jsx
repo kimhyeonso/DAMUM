@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import QuantityControl from '../components/QuantityControl'
+import CartSuccessDrawer from '../components/CartSuccessDrawer'
 import ProductDescription from '../components/ProductDescription'
 import { addCartItem } from '../firebase/cartApi'
 import { auth } from '../firebase/firebase'
@@ -77,23 +78,6 @@ const ProductDetail = () => {
 
     return () => window.removeEventListener('scroll', updateFloatingPurchaseVisibility)
   }, [product?.id])
-
-  useEffect(() => {
-    if (!isCartDrawerOpen) return undefined
-
-    const previousOverflow = document.body.style.overflow
-    const handleKeyDown = (event) => {
-      if (event.key === 'Escape') setIsCartDrawerOpen(false)
-    }
-
-    document.body.style.overflow = 'hidden'
-    window.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.body.style.overflow = previousOverflow
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [isCartDrawerOpen])
 
   if (isLoading) {
     return <p>상품을 불러오는 중입니다</p>
@@ -268,42 +252,7 @@ const ProductDetail = () => {
         </aside>
       )}
 
-      {isCartDrawerOpen && (
-        <div className={styles.cartDrawerLayer} role="presentation">
-          <button
-            type="button"
-            className={styles.cartDrawerBackdrop}
-            aria-label="장바구니 안내 닫기"
-            onClick={() => setIsCartDrawerOpen(false)}
-          />
-          <aside className={styles.cartDrawer} role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title">
-            <button
-              type="button"
-              className={styles.cartDrawerClose}
-              aria-label="장바구니 안내 닫기"
-              onClick={() => setIsCartDrawerOpen(false)}
-            >
-              ×
-            </button>
-            <div className={styles.cartDrawerContent}>
-              <p>장바구니에 담았습니다.</p>
-              <h2 id="cart-drawer-title">장바구니 상품</h2>
-              <div className={styles.cartDrawerItem}>
-                <img src={product.image} alt={product.name} />
-                <div>
-                  <strong>{product.name}</strong>
-                  <span>수량 {quantity}개</span>
-                  <b>{totalPrice.toLocaleString()}원</b>
-                </div>
-              </div>
-            </div>
-            <div className={styles.cartDrawerActions}>
-              <Link to="/cart">장바구니 가기</Link>
-              <Link className={styles.directPurchaseLink} to="/cart">바로 구매하기</Link>
-            </div>
-          </aside>
-        </div>
-      )}
+      <CartSuccessDrawer isOpen={isCartDrawerOpen} onClose={() => setIsCartDrawerOpen(false)} />
     </section>
   )
 }

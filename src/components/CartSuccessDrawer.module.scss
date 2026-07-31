@@ -1,32 +1,3 @@
-.products {
-  width: min(100% - 64px, 1280px);
-  margin: 0 auto;
-  padding: 56px 0 180px;
-}
-
-.catalogHeader {
-  display: block;
-  margin-bottom: 32px;
-  color: var(--color-brand);
-
-  p {
-    font-size: 13px;
-    letter-spacing: 0.02em;
-  }
-
-  h2 {
-    margin: 0;
-    font-size: clamp(24px, 2.2vw, 34px);
-    font-weight: 700;
-    letter-spacing: -0.05em;
-  }
-
-}
-
-.catalogControls {
-  margin-bottom: 28px;
-}
-
 .cartDrawerLayer {
   position: fixed;
   inset: 0;
@@ -73,30 +44,75 @@
 }
 
 .cartDrawerContent {
-  > p {
+  min-height: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  > p:first-child {
     margin: 0;
     color: var(--color-brand);
     font-size: 14px;
     font-weight: 700;
   }
+}
+
+.cartDrawerHeading {
+  margin: 10px 0 18px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
 
   h2 {
-    margin: 10px 0 24px;
+    margin: 0;
     color: var(--color-text);
     font-size: 24px;
   }
+
+  span {
+    color: #62675f;
+    font-size: 13px;
+  }
+
+  > div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  button {
+    padding: 0;
+    border: 0;
+    color: #62675f;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+
+    &:disabled {
+      cursor: wait;
+      opacity: 0.5;
+    }
+  }
+}
+
+.cartDrawerList {
+  min-height: 0;
+  overflow-y: auto;
+  border-top: 1px solid rgb(48 70 61 / 18%);
 }
 
 .cartDrawerItem {
-  padding: 18px 0;
+  padding: 14px 0;
   display: grid;
-  grid-template-columns: 96px minmax(0, 1fr);
-  gap: 18px;
-  border-top: 1px solid rgb(48 70 61 / 18%);
+  grid-template-columns: 82px minmax(0, 1fr);
+  gap: 14px;
   border-bottom: 1px solid rgb(48 70 61 / 18%);
 
   img {
-    width: 96px;
+    width: 82px;
     aspect-ratio: 1 / 1;
     display: block;
     object-fit: cover;
@@ -108,7 +124,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 7px;
+    gap: 5px;
   }
 
   strong {
@@ -128,13 +144,101 @@
   b {
     margin-top: auto;
     color: var(--color-brand);
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 
+.itemControls {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.quantityControl {
+  display: grid;
+  grid-template-columns: 28px 34px 28px;
+  align-items: center;
+  border: 1px solid rgb(48 70 61 / 25%);
+
+  button,
+  span {
+    height: 27px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    color: var(--color-brand);
+    background: transparent;
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  button {
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+      color: #a9b2a3;
+    }
+  }
+
+  span {
+    border-inline: 1px solid rgb(48 70 61 / 18%);
+    color: var(--color-text);
+    font-size: 13px;
+  }
+}
+
+.removeButton {
+  padding: 0;
+  border: 0;
+  color: #737871;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+
+  &:disabled {
+    cursor: wait;
+    opacity: 0.5;
+  }
+}
+
+.emptyMessage {
+  margin: 0;
+  padding: 28px 0;
+  color: #62675f;
+  font-size: 13px;
+  text-align: center;
+}
+
+.cartDrawerTotal {
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-text);
+  font-size: 14px;
+
+  strong {
+    color: var(--color-brand);
+    font-size: 17px;
+  }
+}
+
+.statusMessage,
+.errorMessage {
+  margin: 20px 0;
+  font-size: 13px;
+}
+
+.errorMessage {
+  color: #b53b3b;
+}
+
 .cartDrawerActions {
-  margin-top: auto;
-  padding-top: 24px;
+  margin-top: 24px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
@@ -175,15 +279,6 @@
 }
 
 @media (max-width: 640px) {
-  .products {
-    width: min(100% - 32px, 1280px);
-    padding: 36px 0 64px;
-  }
-
-  .catalogHeader {
-    margin-bottom: 22px;
-  }
-
   .cartDrawer {
     width: min(100%, 420px);
     padding: 24px 20px;

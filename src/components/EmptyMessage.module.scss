@@ -19,4 +19,26 @@
     color: #72776f;
     font-size: 0.9rem;
   }
+
+  a {
+    min-width: 148px;
+    min-height: 44px;
+    margin-top: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-brand);
+    color: var(--color-on-brand);
+    background: var(--color-brand);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--color-brand);
+      background: transparent;
+    }
+  }
 }

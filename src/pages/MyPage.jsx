@@ -72,10 +72,12 @@ const MyPage = () => {
   const [isCartLoading, setIsCartLoading] = useState(true)
   const [cartError, setCartError] = useState('')
   const [deletingCartItemId, setDeletingCartItemId] = useState('')
+  const [isClearingCart, setIsClearingCart] = useState(false)
   const [wishlistItems, setWishlistItems] = useState([])
   const [isWishlistLoading, setIsWishlistLoading] = useState(true)
   const [wishlistError, setWishlistError] = useState('')
   const [deletingWishlistItemId, setDeletingWishlistItemId] = useState('')
+  const [isClearingWishlist, setIsClearingWishlist] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
@@ -280,6 +282,38 @@ const MyPage = () => {
     }
   }
 
+  const handleCartClear = async () => {
+    if (cartItems.length === 0 || !window.confirm('장바구니 상품을 모두 삭제하시겠습니까?')) return
+
+    setCartError('')
+    setIsClearingCart(true)
+
+    try {
+      await Promise.all(cartItems.map((item) => deleteCartItem(user.uid, item.id)))
+      setCartItems([])
+    } catch {
+      setCartError('장바구니 상품을 모두 삭제하지 못했습니다. 잠시 후 다시 시도해주세요.')
+    } finally {
+      setIsClearingCart(false)
+    }
+  }
+
+  const handleWishlistClear = async () => {
+    if (wishlistItems.length === 0 || !window.confirm('찜한 상품을 모두 삭제하시겠습니까?')) return
+
+    setWishlistError('')
+    setIsClearingWishlist(true)
+
+    try {
+      await Promise.all(wishlistItems.map((item) => deleteWishlistItem(user.uid, item.id)))
+      setWishlistItems([])
+    } catch {
+      setWishlistError('찜한 상품을 모두 삭제하지 못했습니다. 잠시 후 다시 시도해주세요.')
+    } finally {
+      setIsClearingWishlist(false)
+    }
+  }
+
   const handleLogout = async () => {
     setIsLoggingOut(true)
 
@@ -363,7 +397,12 @@ const MyPage = () => {
               <p>CART</p>
               <h2>장바구니</h2>
             </div>
-            <Link to="/cart">장바구니로 이동 <span aria-hidden="true">→</span></Link>
+            <div className={styles.summaryActions}>
+              <button type="button" onClick={handleCartClear} disabled={cartItems.length === 0 || isClearingCart}>
+                {isClearingCart ? '삭제 중...' : '전체 삭제'}
+              </button>
+              <Link to="/cart">장바구니로 이동 <span aria-hidden="true">→</span></Link>
+            </div>
           </div>
           {isCartLoading && <p className={styles.statusMessage} role="status">장바구니를 불러오고 있습니다.</p>}
           {cartError && <p className={styles.errorMessage} role="alert">{cartError}</p>}
@@ -383,7 +422,7 @@ const MyPage = () => {
                       <span>가격 {formatPrice(itemPrice)}</span>
                       <span>수량 {itemQuantity}개</span>
                       <b>{formatPrice(itemPrice * itemQuantity)}</b>
-                      <button className={styles.deleteButton} type="button" onClick={() => handleCartItemDelete(item)} disabled={deletingCartItemId === item.id}>
+                      <button className={styles.deleteButton} type="button" onClick={() => handleCartItemDelete(item)} disabled={deletingCartItemId === item.id || isClearingCart}>
                         {deletingCartItemId === item.id ? '삭제 중...' : '삭제'}
                       </button>
                     </li>
@@ -404,7 +443,12 @@ const MyPage = () => {
               <p>WISHLIST</p>
               <h2>찜</h2>
             </div>
-            <Link to="/wishlist">찜한 상품으로 이동 <span aria-hidden="true">→</span></Link>
+            <div className={styles.summaryActions}>
+              <button type="button" onClick={handleWishlistClear} disabled={wishlistItems.length === 0 || isClearingWishlist}>
+                {isClearingWishlist ? '삭제 중...' : '전체 삭제'}
+              </button>
+              <Link to="/wishlist">찜한 상품으로 이동 <span aria-hidden="true">→</span></Link>
+            </div>
           </div>
           {isWishlistLoading && <p className={styles.statusMessage} role="status">찜한 상품을 불러오고 있습니다.</p>}
           {wishlistError && <p className={styles.errorMessage} role="alert">{wishlistError}</p>}
@@ -420,7 +464,7 @@ const MyPage = () => {
                     <strong>{getWishlistProductName(item)}</strong>
                     <span>{formatPrice(getWishlistPrice(item))}</span>
                   </div>
-                  <button className={styles.deleteButton} type="button" onClick={() => handleWishlistItemDelete(item)} disabled={deletingWishlistItemId === item.id}>
+                  <button className={styles.deleteButton} type="button" onClick={() => handleWishlistItemDelete(item)} disabled={deletingWishlistItemId === item.id || isClearingWishlist}>
                     {deletingWishlistItemId === item.id ? '삭제 중...' : '삭제'}
                   </button>
                 </li>

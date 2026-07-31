@@ -75,6 +75,31 @@
   }
 }
 
+.summaryActions {
+  padding-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  a,
+  button {
+    padding: 0;
+    border: 0;
+    color: var(--color-brand);
+    background: transparent;
+    font: inherit;
+    font-size: 13px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    color: var(--color-muted);
+    cursor: wait;
+  }
+}
+
 .memberDetails {
   margin: 0;
 
@@ -330,6 +355,10 @@
     a {
       font-size: 13px;
     }
+  }
+
+  .summaryActions {
+    gap: 10px;
   }
 
   .summaryList li {

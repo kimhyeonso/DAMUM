@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import QuantityControl from '../components/QuantityControl'
+import CartSuccessDrawer from '../components/CartSuccessDrawer'
 import styles from './Products.module.scss'
 import ProductFilter from '../components/ProductFilter'
 import ProductSort from '../components/ProductSort'
@@ -13,6 +14,7 @@ const Products = () => {
   const [ products, setProducts] = useState([])
   const [ priceRange, setPriceRange] = useState('all')
   const [ sortType, setSortType ] = useState('latest')
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false)
 
   useEffect(()=>{
     const loadPro = async () =>{
@@ -69,7 +71,9 @@ const Products = () => {
           productCount={selectItem.length}
         />
       </div>
-      <ProductList products={sortItem} />
+      <ProductList products={sortItem} onCartAdded={() => setIsCartDrawerOpen(true)} />
+
+      <CartSuccessDrawer isOpen={isCartDrawerOpen} onClose={() => setIsCartDrawerOpen(false)} />
     </section>
   )
 }
