@@ -1,10 +1,11 @@
-import { collection, deleteDoc, doc, getDocs, onSnapshot, runTransaction, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, runTransaction, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { db } from './firebase'
 
 const getCartItemsCollection = (userId) => collection(db, 'carts', userId, 'items')
+const getCartItemsQuery = (userId) => query(getCartItemsCollection(userId), orderBy('createAt', 'asc'))
 
 export const getCartItems = async (userId) => {
-  const snapshot = await getDocs(getCartItemsCollection(userId))
+  const snapshot = await getDocs(getCartItemsQuery(userId))
   return snapshot.docs.map((item) => {
     const data = item.data()
 
@@ -15,6 +16,20 @@ export const getCartItems = async (userId) => {
     }
   })
 }
+
+export const subscribeToCartItems = (userId, callback, onError) => onSnapshot(
+  getCartItemsQuery(userId),
+  (snapshot) => callback(snapshot.docs.map((item) => {
+    const data = item.data()
+
+    return {
+      ...data,
+      id: item.id,
+      name: data.name ?? data.productName ?? '상품명 없음',
+    }
+  })),
+  onError,
+)
 
 export const subscribeToCartCount = (userId, callback, onError) => onSnapshot(
   getCartItemsCollection(userId),

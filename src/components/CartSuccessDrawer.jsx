@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { deleteCartItem, getCartItems, updateCartItemQuantity } from '../firebase/cartApi'
+import { deleteCartItem, subscribeToCartItems, updateCartItemQuantity } from '../firebase/cartApi'
 import { auth } from '../firebase/firebase'
 import { useAuthStore } from '../store/authStore'
 import styles from './CartSuccessDrawer.module.scss'
@@ -29,19 +29,23 @@ const CartSuccessDrawer = ({ isOpen, onClose }) => {
     setIsLoading(true)
     setErrorMessage('')
 
-    getCartItems(cartUserId)
-      .then((items) => {
-        if (isActive) setCartItems(items)
-      })
-      .catch(() => {
-        if (isActive) setErrorMessage('장바구니 상품을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.')
-      })
-      .finally(() => {
-        if (isActive) setIsLoading(false)
-      })
+    const unsubscribe = subscribeToCartItems(
+      cartUserId,
+      (items) => {
+        if (!isActive) return
+        setCartItems(items)
+        setIsLoading(false)
+      },
+      () => {
+        if (!isActive) return
+        setErrorMessage('장바구니 상품을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.')
+        setIsLoading(false)
+      },
+    )
 
     return () => {
       isActive = false
+      unsubscribe()
     }
   }, [isOpen, user?.uid])
 
