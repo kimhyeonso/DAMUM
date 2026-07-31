@@ -4,18 +4,18 @@
   margin: 56px auto 88px;
   display: grid;
   grid-template-columns: 230px minmax(0, 1fr);
-  border: 1px solid #e3e3e3;
-  background: #ffffff;
+  border: 1px solid rgb(48 70 61 / 20%);
+  background: #f7f7f7;
 }
 
 .sidebar {
   padding: 32px 20px;
-  border-right: 1px solid #e3e3e3;
-  background: #fafafa;
+  border-right: 1px solid rgb(48 70 61 / 20%);
+  background: #f7f7f7;
 
   > p {
     margin: 0 0 8px;
-    color: #777777;
+    color: var(--color-brand);
     font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -23,7 +23,7 @@
 
   h1 {
     margin: 0 0 30px;
-    color: #111111;
+    color: var(--color-brand);
     font-size: 22px;
   }
 
@@ -34,19 +34,19 @@
 
   a {
     padding: 12px 14px;
-    color: #555555;
+    color: var(--color-brand);
     font-size: 14px;
     font-weight: 600;
   }
 
   a:hover,
   a:focus-visible {
-    background: #eeeeee;
+    background: var(--color-surface);
   }
 
   a[aria-current='page'] {
-    background: #111111;
-    color: #ffffff;
+    background: var(--color-brand);
+    color: var(--color-on-brand);
   }
 }
 
@@ -65,7 +65,7 @@
   .sidebar {
     padding: 24px 20px;
     border-right: 0;
-    border-bottom: 1px solid #e3e3e3;
+    border-bottom: 1px solid rgb(48 70 61 / 20%);
 
     h1 {
       margin-bottom: 18px;

@@ -36,6 +36,7 @@ const Header = () => {
   const isAdmin = String(role ?? '').trim().toLowerCase() === 'admin'
   const [cartCount, setCartCount] = useState(0)
   const [wishlistCount, setWishlistCount] = useState(0)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     if (!userId) {
@@ -53,11 +54,32 @@ const Header = () => {
     }
   }, [userId])
 
+  useEffect(() => {
+    if (!isMobileMenuOpen) return undefined
+
+    const previousOverflow = document.body.style.overflow
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setIsMobileMenuOpen(false)
+    }
+
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isMobileMenuOpen])
+
+  const closeMobileMenu = () => setIsMobileMenuOpen(false)
+
   return (
     <header className={styles.header}>
       <div className={styles.mainHeader}>
         {/* 버튼 있음 */}
-        <SearchBox />
+        <div className={styles.desktopSearch}>
+          <SearchBox />
+        </div>
         <Link to="/" className={styles.logo} aria-label="RECAT home">
           <img src={logo} alt="logo" />
         </Link>
@@ -82,6 +104,17 @@ const Header = () => {
             <span className={styles.iconCount} aria-hidden="true">{cartCount > 99 ? '99+' : cartCount}</span>
           </Link>
         </nav>
+        <button
+          type="button"
+          className={styles.mobileMenuButton}
+          aria-label="메뉴 열기"
+          aria-expanded={isMobileMenuOpen}
+          onClick={() => setIsMobileMenuOpen(true)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
       </div>
 
       <nav className={styles.nav} aria-label="Product categories">
@@ -93,6 +126,42 @@ const Header = () => {
         <Link to="/products/category/gift-sets">선물세트</Link>
         <Link to="/notice">공지사항</Link>
       </nav>
+
+      {isMobileMenuOpen && (
+        <div className={styles.mobileMenuLayer} role="presentation">
+          <button type="button" className={styles.mobileMenuBackdrop} aria-label="메뉴 닫기" onClick={closeMobileMenu} />
+          <aside className={styles.mobileMenuPanel} role="dialog" aria-modal="true" aria-label="모바일 메뉴">
+            <div className={styles.mobileMenuTop}>
+              <strong>MENU</strong>
+              <button type="button" aria-label="메뉴 닫기" onClick={closeMobileMenu}>×</button>
+            </div>
+            <div className={styles.mobileMenuSearch}>
+              <SearchBox />
+            </div>
+            <nav className={styles.mobileCategoryNav} aria-label="상품 카테고리">
+              <Link to="/products" onClick={closeMobileMenu}>전체상품</Link>
+              <Link to="/products/category/plates" onClick={closeMobileMenu}>접시</Link>
+              <Link to="/products/category/bowls" onClick={closeMobileMenu}>볼 · 면기</Link>
+              <Link to="/products/category/cups" onClick={closeMobileMenu}>컵 · 잔</Link>
+              <Link to="/products/category/tea-sets" onClick={closeMobileMenu}>다기</Link>
+              <Link to="/products/category/gift-sets" onClick={closeMobileMenu}>선물세트</Link>
+              <Link to="/notice" onClick={closeMobileMenu}>공지사항</Link>
+            </nav>
+            <nav className={styles.mobileUtilityNav} aria-label="사용자 메뉴">
+              {isAuthenticated ? (
+                <>
+                  <Link to="/mypage" onClick={closeMobileMenu}>{nickname ? `${nickname}님 마이페이지` : '마이페이지'}</Link>
+                  {isAdmin && <Link to="/admin" onClick={closeMobileMenu}>관리자</Link>}
+                </>
+              ) : (
+                <Link to="/login" onClick={closeMobileMenu}>로그인</Link>
+              )}
+              <Link to="/wishlist" onClick={closeMobileMenu}>찜한 상품 <span>{wishlistCount}</span></Link>
+              <Link to="/cart" onClick={closeMobileMenu}>장바구니 <span>{cartCount}</span></Link>
+            </nav>
+          </aside>
+        </div>
+      )}
     </header>
   )
 }

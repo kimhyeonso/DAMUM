@@ -1,0 +1,127 @@
+.footer {
+  position: relative;
+  min-height: 314px;
+  overflow: hidden;
+  color: #ffffff;
+  background-color: #111111;
+  background-image: url('/img/footer/footer2.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto 100%;
+  background-attachment: fixed;
+}
+
+.footer::before {
+  position: absolute;
+  inset: 0;
+  content: '';
+  background: rgb(0 0 0 / 68%);
+}
+
+.footerContent {
+  position: relative;
+  z-index: 1;
+  width: min(100% - 64px, 1280px);
+  margin: 0 auto;
+  padding: 72px 0 28px;
+  display: grid;
+  grid-template-columns: minmax(240px, 1.1fr) minmax(0, 1.4fr);
+  gap: 64px 120px;
+}
+
+.brandArea {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  .logo {
+    width: min(100%, 160px);
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
+
+  p {
+    margin: 32px 0 8px;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  span {
+    color: rgb(255 255 255 / 82%);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+}
+
+.footerNav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-content: start;
+  gap: 20px 32px;
+
+  a {
+    width: fit-content;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    text-underline-offset: 6px;
+
+    &:hover,
+    &:focus-visible {
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #ffffff;
+      outline-offset: 4px;
+    }
+  }
+}
+
+.footerBottom {
+  grid-column: 1 / -1;
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  border-top: 1px solid rgb(255 255 255 / 38%);
+  color: rgb(255 255 255 / 82%);
+  font-size: 13px;
+  line-height: 1.6;
+
+  p {
+    margin: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .footer {
+    background-attachment: scroll;
+    background-size: auto 100%;
+  }
+
+  .footerContent {
+    width: min(100% - 40px, 1280px);
+    padding: 56px 0 24px;
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .brandArea .logo {
+    width: 220px;
+  }
+
+  .footerNav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 24px;
+  }
+
+  .footerBottom {
+    grid-column: auto;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+}

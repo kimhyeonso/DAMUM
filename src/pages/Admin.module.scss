@@ -1,7 +1,7 @@
 .admin {
   > p:first-child {
     margin: 0 0 8px;
-    color: #777777;
+    color: var(--color-brand);
     font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -9,14 +9,16 @@
 
   h2 {
     margin: 0;
-    color: #111111;
-    font-size: clamp(28px, 3.5vw, 38px);
+    color: var(--color-brand);
+    font-size: clamp(24px, 2.2vw, 34px);
+    font-weight: 700;
+    letter-spacing: -0.05em;
   }
 
   > span {
     display: block;
     margin-top: 12px;
-    color: #666666;
+    color: #62675f;
     font-size: 14px;
   }
 }
@@ -32,23 +34,24 @@
     padding: 22px;
     display: flex;
     align-items: flex-end;
-    border: 1px solid #e3e3e3;
-    color: #111111;
+    border: 1px solid rgb(48 70 61 / 20%);
+    color: var(--color-brand);
+    background: #ffffff;
     font-size: 16px;
     font-weight: 700;
   }
 
   a:hover,
   a:focus-visible {
-    border-color: #111111;
-    background: #111111;
-    color: #ffffff;
+    border-color: var(--color-brand);
+    background: var(--color-brand);
+    color: var(--color-on-brand);
   }
 }
 
 .passwordNotice {
   margin: 26px 0 0;
-  color: #777777;
+  color: #62675f;
   font-size: 13px;
 }
 

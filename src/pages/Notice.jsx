@@ -39,26 +39,28 @@ const Notice = () => {
   }, [])
 
   return (
-    <section className={styles.notice}>
-      <p>NOTICE</p>
-      <h1>공지사항</h1>
-      <span>새로운 소식과 안내를 확인하세요.</span>
+    <section className={styles.noticePage}>
+      <div className={styles.notice}>
+        <p>NOTICE</p>
+        <h1>공지사항</h1>
+        <span>새로운 소식과 안내를 확인하세요.</span>
 
-      {isLoading && <p className={styles.statusMessage}>공지사항을 불러오는 중입니다.</p>}
-      {!isLoading && error && <p className={styles.errorMessage}>{error}</p>}
-      {!isLoading && !error && notices.length === 0 && <p className={styles.emptyMessage}>등록된 공지사항이 없습니다.</p>}
-      {!isLoading && !error && notices.length > 0 && (
-        <ul className={styles.noticeList}>
-          {notices.map((notice) => (
-            <li key={notice.id}>
-              <Link to={`/notice/${notice.id}`}>
-                <strong>{notice.title || '제목 없음'}</strong>
-                <span>{formatDate(notice.createAt)}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+        {isLoading && <p className={styles.statusMessage}>공지사항을 불러오는 중입니다.</p>}
+        {!isLoading && error && <p className={styles.errorMessage}>{error}</p>}
+        {!isLoading && !error && notices.length === 0 && <p className={styles.emptyMessage}>등록된 공지사항이 없습니다.</p>}
+        {!isLoading && !error && notices.length > 0 && (
+          <ul className={styles.noticeList}>
+            {notices.map((notice) => (
+              <li key={notice.id}>
+                <Link to={`/notice/${notice.id}`}>
+                  <strong>{notice.title || '제목 없음'}</strong>
+                  <span>{formatDate(notice.createAt)}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </section>
   )
 }

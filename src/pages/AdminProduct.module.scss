@@ -243,7 +243,13 @@
   }
 }
 
-.stockControl {
+.inventoryControls {
+  display: grid;
+  gap: 8px;
+}
+
+.stockControl,
+.discountControl {
   display: grid;
   grid-template-columns: auto 56px auto;
   align-items: center;
@@ -354,7 +360,7 @@
     justify-content: flex-start;
   }
 
-  .stockControl {
+  .inventoryControls {
     grid-column: 1 / -1;
     justify-content: flex-start;
   }

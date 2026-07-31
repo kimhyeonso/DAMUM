@@ -1,5 +1,6 @@
 .content {
   min-height: 60vh;
+  display: flow-root;
   background: #F7F7F7;
 }
 

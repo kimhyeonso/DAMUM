@@ -1,15 +1,15 @@
 .home {
-  padding-bottom: 72px;
+  padding-bottom: 180px;
 
   .productHeading {
     width: min(100% - 32px, 1280px);
-    margin: 0 auto 12px;
+    margin: 0 auto 32px;
 
     h2 {
       width: 100%;
       text-align: center;
       color: var(--color-brand);
-      font-size: 25px;
+      font-size: clamp(25px , 2vw, 30px);
       font-weight: 600;
       letter-spacing: -0.03em;
     }
@@ -129,7 +129,7 @@
   .identityContent {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 200px;
+    gap: 80px;
     align-items: center;
 
     > img {
@@ -160,8 +160,79 @@
         white-space: pre-line;
       }
 
+      .brandGallery {
+        width: min(100%, 390px);
+        margin-top: 28px;
+      }
+
+      .brandThumbnailList {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+
+        button {
+          position: relative;
+          padding: 0;
+          overflow: hidden;
+          border: 0;
+          background: var(--color-surface);
+          cursor: pointer;
+
+          &:not(.activeBrandThumbnail)::after {
+            position: absolute;
+            inset: 0;
+            content: '';
+            background: rgb(255 255 255 / 58%);
+            transition: background-color 0.2s ease;
+          }
+
+          &:focus-visible {
+            outline: 2px solid var(--color-line);
+            outline-offset: 2px;
+          }
+        }
+
+        img {
+          width: 100%;
+          aspect-ratio: 0.76 / 1;
+          display: block;
+          object-fit: cover;
+        }
+      }
+
+      .brandGalleryControls {
+        margin-top: 16px;
+        display: flex;
+        gap: 10px;
+
+        button {
+          width: 42px;
+          height: 42px;
+          border: 1px solid var(--color-brand);
+          border-radius: 50%;
+          color: var(--color-brand);
+          background: transparent;
+          cursor: pointer;
+          font-size: 20px;
+          line-height: 1;
+          transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+
+          &:hover,
+          &:focus-visible {
+            color: var(--color-on-brand);
+            background: var(--color-brand);
+            transform: translateY(-2px);
+          }
+
+          &:focus-visible {
+            outline: 2px solid var(--color-line);
+            outline-offset: 3px;
+          }
+        }
+      }
+
       .productViewAll {
-        margin-top: 32px;
+        margin-top: 72px;
       }
     }
   }
@@ -202,6 +273,7 @@
   }
 
   .socialItem {
+    position: relative;
     min-width: 0;
     min-height: 0;
     margin: 0;
@@ -219,6 +291,238 @@
     &:hover img {
       transform: scale(1.04);
     }
+
+    &::before,
+    &::after {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      content: '';
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    &::before {
+      inset: 50% auto auto 50%;
+      z-index: 3;
+      width: 32px;
+      height: 32px;
+      background: url('/img/icon/insta.png') center / contain no-repeat;
+      transform: translate(-50%, -40%);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    &::after {
+      background: rgb(0 0 0 / 48%);
+    }
+
+    &:hover::before,
+    &:hover::after,
+    &:focus-within::before,
+    &:focus-within::after {
+      opacity: 1;
+    }
+
+    &:hover::before,
+    &:focus-within::before {
+      transform: translate(-50%, -50%);
+    }
+
+    button {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+
+      &:focus-visible {
+        outline: 2px solid var(--color-line);
+        outline-offset: -3px;
+      }
+    }
+  }
+
+  .socialModalLayer {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    padding: 32px;
+    display: grid;
+    place-items: center;
+  }
+
+  .socialModalBackdrop {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: rgb(16 21 19 / 64%);
+    backdrop-filter: blur(4px);
+    cursor: pointer;
+  }
+
+  .socialModal {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 920px);
+    max-height: min(720px, calc(100vh - 64px));
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+    overflow: hidden;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 20px 56px rgb(0 0 0 / 28%);
+    animation: socialModalIn 0.24s ease-out;
+  }
+
+  .socialModalClose {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    z-index: 2;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    color: #636861;
+    background: transparent;
+    cursor: pointer;
+    font-size: 27px;
+    font-weight: 300;
+    line-height: 1;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-line);
+      outline-offset: 2px;
+    }
+  }
+
+  .socialModalImageArea {
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+    background: #efefed;
+
+    > img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+  }
+
+  .socialModalPrevious,
+  .socialModalNext {
+    position: absolute;
+    top: 50%;
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 50%;
+    color: var(--color-brand);
+    background: rgb(255 255 255 / 90%);
+    cursor: pointer;
+    font-size: 24px;
+    line-height: 1;
+    transform: translateY(-50%);
+
+    &:focus-visible {
+      outline: 2px solid var(--color-line);
+      outline-offset: 3px;
+    }
+  }
+
+  .socialModalPrevious { left: 14px; }
+  .socialModalNext { right: 14px; }
+
+  .socialModalCount {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    padding: 6px 11px;
+    border-radius: 99px;
+    color: var(--color-text);
+    background: rgb(255 255 255 / 88%);
+    font-size: 13px;
+    font-weight: 700;
+    transform: translateX(-50%);
+  }
+
+  .socialModalInfo {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+  }
+
+  .socialModalProfile {
+    min-height: 68px;
+    padding: 0 52px 0 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgb(48 70 61 / 13%);
+
+    span {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--color-on-brand);
+      background: var(--color-brand);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    strong {
+      color: var(--color-text);
+      font-size: 14px;
+    }
+  }
+
+  .socialModalCopy {
+    padding: 28px 22px;
+    color: var(--color-text);
+    font-size: 14px;
+    line-height: 1.7;
+
+    strong {
+      font-size: 14px;
+    }
+
+    p {
+      margin: 9px 0 0;
+    }
+  }
+
+  .socialModalHashtags {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    span {
+      color: var(--color-brand);
+      font-size: 13px;
+      font-weight: 700;
+    }
+  }
+
+  .socialModalDate {
+    margin: auto 22px 22px;
+    color: #737871;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+  }
+
+  @keyframes socialModalIn {
+    from { opacity: 0; transform: translateY(12px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
   }
 
   .socialLargeLeft {
@@ -281,6 +585,22 @@
       h2 {
         margin-bottom: 32px;
       }
+    }
+
+    .socialModalLayer {
+      padding: 16px;
+    }
+
+    .socialModal {
+      width: min(100%, 520px);
+      height: min(720px, calc(100vh - 32px));
+      max-height: none;
+      grid-template-columns: 1fr;
+      grid-template-rows: minmax(0, 1fr) auto;
+    }
+
+    .socialModalInfo {
+      min-height: 190px;
     }
 
     .socialGrid {

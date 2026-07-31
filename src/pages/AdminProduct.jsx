@@ -53,6 +53,8 @@ const AdminProduct = () => {
   const [isMigrating, setIsMigrating] = useState(false)
   const [stockDrafts, setStockDrafts] = useState({})
   const [savingStockId, setSavingStockId] = useState(null)
+  const [discountDrafts, setDiscountDrafts] = useState({})
+  const [savingDiscountId, setSavingDiscountId] = useState(null)
   const [updatingRecommendationId, setUpdatingRecommendationId] = useState(null)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
@@ -68,6 +70,7 @@ const AdminProduct = () => {
         setProducts(firestoreProducts)
         setIsJsonFallback(false)
         setStockDrafts(Object.fromEntries(firestoreProducts.map((product) => [product.id, String(product.stock ?? 0)])))
+        setDiscountDrafts(Object.fromEntries(firestoreProducts.map((product) => [product.id, String(product.discountRate ?? 0)])))
       } else {
         const response = await fetch('/data/products.json')
         if (!response.ok) throw new Error('상품 JSON 조회 실패')
@@ -76,6 +79,7 @@ const AdminProduct = () => {
         setProducts(jsonProducts)
         setIsJsonFallback(true)
         setStockDrafts(Object.fromEntries(jsonProducts.map((product) => [product.id, String(product.stock ?? 0)])))
+        setDiscountDrafts(Object.fromEntries(jsonProducts.map((product) => [product.id, String(product.discountRate ?? 0)])))
       }
     } catch (loadError) {
       setProducts([])
@@ -157,11 +161,13 @@ const AdminProduct = () => {
           product.id === editingId ? { ...product, ...productData } : product
         )))
         setStockDrafts((currentDrafts) => ({ ...currentDrafts, [editingId]: String(stock) }))
+        setDiscountDrafts((currentDrafts) => ({ ...currentDrafts, [editingId]: String(discountRate) }))
         setMessage('상품 정보를 수정했습니다.')
       } else {
         const productId = await createProduct(productData)
         setProducts((currentProducts) => [{ id: productId, ...productData }, ...currentProducts])
         setStockDrafts((currentDrafts) => ({ ...currentDrafts, [productId]: String(stock) }))
+        setDiscountDrafts((currentDrafts) => ({ ...currentDrafts, [productId]: String(discountRate) }))
         setMessage('상품을 등록했습니다.')
       }
 
@@ -231,6 +237,42 @@ const AdminProduct = () => {
       setError(`재고를 저장하지 못했습니다. ${getFirebaseErrorMessage(stockError)} (오류 코드: ${getFirebaseErrorCode(stockError)})`)
     } finally {
       setSavingStockId(null)
+    }
+  }
+
+  const handleDiscountDraftChange = (productId, value) => {
+    if (!/^\d*$/.test(value) || (value !== '' && Number(value) > 100)) {
+      setError('할인율은 0부터 100 사이의 정수만 입력할 수 있습니다.')
+      return
+    }
+
+    setError('')
+    setDiscountDrafts((currentDrafts) => ({ ...currentDrafts, [productId]: value }))
+  }
+
+  const handleDiscountSave = async (product) => {
+    const discountValue = discountDrafts[product.id] ?? ''
+
+    if (!/^\d+$/.test(discountValue) || Number(discountValue) > 100) {
+      setError('할인율은 0부터 100 사이의 정수로 저장해주세요.')
+      return
+    }
+
+    const discountRate = Number(discountValue)
+    setSavingDiscountId(product.id)
+    setError('')
+    setMessage('')
+
+    try {
+      await updateProduct(product.id, { discountRate })
+      setProducts((currentProducts) => currentProducts.map((item) => (
+        item.id === product.id ? { ...item, discountRate } : item
+      )))
+      setMessage(`'${product.name}' 상품의 할인율을 ${discountRate}%로 저장했습니다.`)
+    } catch (discountError) {
+      setError(`할인율을 저장하지 못했습니다. ${getFirebaseErrorMessage(discountError)} (오류 코드: ${getFirebaseErrorCode(discountError)})`)
+    } finally {
+      setSavingDiscountId(null)
     }
   }
 
@@ -369,18 +411,33 @@ const AdminProduct = () => {
                   <span>{Number(product.price ?? 0).toLocaleString()}원 · 현재 재고 {product.stock ?? 0}개</span>
                 </div>
                 {!isJsonFallback && (
-                  <div className={styles.stockControl}>
-                    <label htmlFor={`stock-${product.id}`}>재고</label>
-                    <input
-                      id={`stock-${product.id}`}
-                      type="text"
-                      inputMode="numeric"
-                      value={stockDrafts[product.id] ?? ''}
-                      onChange={(event) => handleStockDraftChange(product.id, event.target.value)}
-                    />
-                    <button type="button" onClick={() => handleStockSave(product)} disabled={savingStockId === product.id}>
-                      {savingStockId === product.id ? '저장 중' : '저장'}
-                    </button>
+                  <div className={styles.inventoryControls}>
+                    <div className={styles.stockControl}>
+                      <label htmlFor={`stock-${product.id}`}>재고</label>
+                      <input
+                        id={`stock-${product.id}`}
+                        type="text"
+                        inputMode="numeric"
+                        value={stockDrafts[product.id] ?? ''}
+                        onChange={(event) => handleStockDraftChange(product.id, event.target.value)}
+                      />
+                      <button type="button" onClick={() => handleStockSave(product)} disabled={savingStockId === product.id}>
+                        {savingStockId === product.id ? '저장 중' : '저장'}
+                      </button>
+                    </div>
+                    <div className={styles.discountControl}>
+                      <label htmlFor={`discount-${product.id}`}>할인율(%)</label>
+                      <input
+                        id={`discount-${product.id}`}
+                        type="text"
+                        inputMode="numeric"
+                        value={discountDrafts[product.id] ?? ''}
+                        onChange={(event) => handleDiscountDraftChange(product.id, event.target.value)}
+                      />
+                      <button type="button" onClick={() => handleDiscountSave(product)} disabled={savingDiscountId === product.id}>
+                        {savingDiscountId === product.id ? '저장 중' : '저장'}
+                      </button>
+                    </div>
                   </div>
                 )}
                 <div className={styles.actions}>

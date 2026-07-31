@@ -60,6 +60,7 @@
     "description": "과일과 디저트를 담기 좋은 넉넉한 크기의 부드러운 디저트볼입니다.",
     "stock": 16,
     "detailImages": ["/img/products/product-05-detail01.png", "/img/products/product-05-detail02.png", "/img/products/product-05-detail03.png", "/img/products/product-05-detail04.png"],
+    "detailDescriptionImage": "/img/productDetail/productDetail-05.png",
     "image": "/img/products/product-05-main01.jpg"
   },
   {
@@ -72,6 +73,7 @@
     "description": "담백한 색감과 편안한 형태가 돋보이는 데일리 컵 2개 세트입니다.",
     "stock": 21,
     "detailImages": ["/img/products/product-06-detail01.png", "/img/products/product-06-detail02.png"],
+    "detailDescriptionImage": "/img/productDetail/productDetail-06.png",
     "image": "/img/products/product-06-main01.png"
   },
   {
@@ -84,6 +86,7 @@
     "description": "달항아리의 둥근 아름다움을 담아 특별한 날을 기념하기 좋은 제품입니다.",
     "stock": 7,
     "detailImages": ["/img/products/product-07-detail01.png", "/img/products/product-07-detail02.png", "/img/products/product-07-detail03.png", "/img/products/product-07-detail04.png"],
+    "detailDescriptionImage": "/img/productDetail/productDetail-07.png",
     "image": "/img/products/product-07-main01.png"
   },
   {
@@ -96,6 +99,7 @@
     "description": "여럿이 함께 즐기는 티타임을 위한 단정한 구성의 3인 다기세트입니다.",
     "stock": 14,
     "detailImages": ["/img/products/product-08-detail01.jpg", "/img/products/product-08-detail02.jpg"],
+    "detailDescriptionImage": "/img/productDetail/productDetail-08.png",
     "image": "/img/products/product-08-main01.jpg"
   },
   {
@@ -108,6 +112,7 @@
     "description": "식탁을 조화롭게 꾸밀 수 있도록 구성한 실용적인 4인 식기세트입니다.",
     "stock": 6,
     "detailImages": ["/img/products/product-09-detail02.jpg"],
+    "detailDescriptionImage": "/img/productDetail/productDetail-09.png",
     "image": "/img/products/product-09-main01.jpg"
   },
   {
@@ -119,6 +124,7 @@
     "discountRate": 0,
     "description": "반찬과 디저트를 깔끔하게 담기 좋은 은은한 줄무늬 원접시입니다.",
     "stock": 19,
+    "detailDescriptionImage": "/img/productDetail/productDetail-10.png",
     "image": "/img/products/product-10-main01.jpg"
   },
   {
@@ -131,6 +137,7 @@
     "description": "요리의 색감을 돋보이게 해 주는 모던한 디자인의 미카엘 접시입니다.",
     "stock": 11,
     "detailImages": ["/img/products/product-11-detail01.jpg", "/img/products/product-11-detail02.jpg", "/img/products/product-11-detail03.jpg"],
+    "detailDescriptionImage": "/img/productDetail/productDetail-11.png",
     "image": "/img/products/product-11-main01.jpg"
   },
   {
@@ -143,6 +150,7 @@
     "description": "가족과 손님을 위한 다과 시간을 풍성하게 만들어 주는 5인 다기세트입니다.",
     "stock": 8,
     "detailImages": ["/img/products/product-12-detail01.jpg", "/img/products/product-12-detail02.jpg", "/img/products/product-12-detail03.jpg", "/img/products/product-12-detail04.jpg"],
+    "detailDescriptionImage": "/img/productDetail/productDetail-12.png",
     "image": "/img/products/product-12-main01.jpg"
   }
 ]
